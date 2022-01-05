@@ -1,9 +1,9 @@
 defmodule Offsite.Downloader.Wget do
   use GenServer
   require Logger
-  # import ShorterMaps
+  import ShorterMaps
 
-  @script_path "/home/arpan/dev/offsite/lib/offsite/wget.js"
+  @script_path "./lib/offsite/wget.js"
 
   # Offsite.Downloader.Wget.start_link(%{src: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4", dest: "/tmp/exp.vid"})
 
@@ -14,7 +14,8 @@ defmodule Offsite.Downloader.Wget do
     GenServer.start_link(__MODULE__, args, opts)
   end
 
-  def init(%{src: src, dest: dest}) do
+  def init(~M{src, dest}) do
+    # Makes your process call terminate/2 upon exit.
     Process.flag(:trap_exit, true)
 
     port =
@@ -25,63 +26,76 @@ defmodule Offsite.Downloader.Wget do
 
     Port.monitor(port)
 
-    {:ok, %{port: port, latest_progress: nil, latest_bytes: nil, exit_status: nil}}
+    {:ok,
+     %{
+       src: src,
+       dest: dest,
+       port: port,
+       latest_progress: nil,
+       latest_bytes: nil,
+       exit_status: nil,
+       size: nil,
+       status: "initiated",
+       error_reason: nil
+     }}
   end
 
-  defp get_command(src, dest), do: "#{@script_path} --src=#{src} --dest=#{dest}"
-
-  def terminate(reason, %{port: port} = state) do
-    Logger.info(
-      "** TERMINATE: #{inspect(reason)}. This is the last chance to clean up after this process."
-    )
-
-    Logger.info("Final state: #{inspect(state)}")
-
+  def terminate(reason, ~M{port} = state) do
+    Logger.info("Terminate wget-worker: reason=#{inspect(reason)} state=#{inspect(state)}")
     port_info = Port.info(port)
     os_pid = port_info[:os_pid]
-
-    Logger.warn("Orphaned OS process: #{os_pid}")
+    System.cmd("kill", ["-9", "#{os_pid}"])
 
     :normal
   end
 
-  # This callback handles data incoming from the command's STDOUT
-  def handle_info({port, {:data, "progress:" <> progress}}, %{port: port} = state) do
-    Logger.info("Progress: #{inspect(progress)}")
+  def handle_cast("canceled", state) do
+    cleanup(state)
+    {:stop, "cancel", %{state | status: "canceled", exit_status: :normal}}
+  end
+
+  def handle_info({port, {:data, "start:" <> filesize}}, ~M{port} = state) do
+    {:noreply, %{state | size: filesize, status: "active"}}
+  end
+
+  def handle_info({port, {:data, "progress:" <> progress}}, ~M{port} = state) do
     {:noreply, %{state | latest_progress: String.trim(progress)}}
   end
 
-  def handle_info({port, {:data, "bytes:" <> bytes}}, %{port: port} = state) do
-    Logger.info("Bytes: #{inspect(bytes)}")
+  def handle_info({port, {:data, "bytes:" <> bytes}}, ~M{port} = state) do
     {:noreply, %{state | latest_bytes: String.trim(bytes)}}
   end
 
-  def handle_info({port, {:data, other}}, %{port: port} = state) do
-    Logger.info("Other: #{inspect(other)}")
-    {:noreply, state}
+  def handle_info({port, {:data, "finish:" <> _msg}}, ~M{port} = state) do
+    {:stop, "finish", %{state | status: "finish", exit_status: :normal}}
   end
 
-  # This callback tells us when the process exits
-  def handle_info({port, {:exit_status, status}}, %{port: port} = state) do
-    Logger.info("Port exit: :exit_status: #{status}")
-
-    new_state = %{state | exit_status: status}
-
-    {:noreply, new_state}
+  def handle_info({port, {:data, "error:" <> message}}, ~M{port} = state) do
+    cleanup(state)
+    {:stop, "error", %{state | status: "error", error_reason: message, exit_status: :error}}
   end
 
-  def handle_info({:DOWN, _ref, :port, port, :normal}, state) do
-    Logger.info("Handled :DOWN message from port: #{inspect(port)}")
-    {:noreply, state}
+  def handle_info({port, {:exit_status, status}}, ~M{port} = state) do
+    {:stop, "exit", %{state | exit_status: status}}
   end
 
-  def handle_info({:EXIT, port, :normal}, state) do
-    Logger.info("handle_info: EXIT")
-    {:noreply, state}
+  def handle_info({:DOWN, _ref, :port, _port, :normal}, state) do
+    {:stop, "down", %{state | exit_status: :normal}}
+  end
+
+  def handle_info({:EXIT, _port, :normal}, state) do
+    {:stop, "EXIT", %{state | exit_status: :normal}}
   end
 
   def handle_info(msg, state) do
     Logger.info("Unhandled message: #{inspect(msg)}")
     {:noreply, state}
+  end
+
+  defp get_command(src, dest), do: "#{@script_path} --src=#{src} --dest=#{dest}"
+
+  defp cleanup(~M{dest}) do
+    res = File.rm(dest)
+    Logger.info("Remove left over file: #{inspect(res)}")
   end
 end

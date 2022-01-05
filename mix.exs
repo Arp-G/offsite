@@ -45,7 +45,9 @@ defmodule Offsite.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
-      {:shorter_maps, "~> 2.2"}
+      {:shorter_maps, "~> 2.2"},
+      {:credo, "~> 1.5"},
+      {:dialyxir, "~> 0.5.0", only: [:dev], runtime: false},
     ]
   end
 
