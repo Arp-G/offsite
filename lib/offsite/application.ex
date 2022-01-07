@@ -14,7 +14,7 @@ defmodule Offsite.Application do
       {Phoenix.PubSub, name: Offsite.PubSub},
       # Start the Endpoint (http/https)
       OffsiteWeb.Endpoint,
-
+      Offsite.Downloaders.Wget.Supervisor,
       Offsite.Downloaders.Wget
       # Start a worker by calling: Offsite.Worker.start_link(arg)
       # {Offsite.Worker, arg}

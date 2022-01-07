@@ -49,7 +49,7 @@ defmodule Offsite.MixProject do
       {:typed_struct, "~> 0.2.1"},
       {:shorter_maps, "~> 2.2"},
       # {:credo, "~> 1.5"},
-      {:dialyxir, "~> 0.5.0", only: [:dev], runtime: false},
+      {:dialyxir, "~> 0.5.0", only: [:dev], runtime: false}
     ]
   end
 

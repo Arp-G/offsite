@@ -1,19 +1,20 @@
 defmodule Offsite.Downloaders.Wget.Worker do
-  use GenServer
+  use GenServer, restart: :temporary
   require Logger
   import ShorterMaps
 
   @script_path "./lib/offsite/downloaders/wget/script.js"
 
-  # Offsite.Downloader.Wget.start_link(%{src: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4", dest: "/tmp/exp.vid"})
-
   # GenServer API
+
+  # Using start instead of start_link to avoid the parent process from getting terminated when this worker terminates
   def start_link(args, opts \\ []) do
     GenServer.start_link(__MODULE__, args, opts)
   end
 
   @impl GenServer
-  def init(~M{id, src, dest}) do
+  def init(~M{id, src, dest, from}) do
+    Logger.info("Start new wget worker: #{id}")
     # Makes your process call terminate/2 upon exit.
     Process.flag(:trap_exit, true)
 
@@ -26,15 +27,20 @@ defmodule Offsite.Downloaders.Wget.Worker do
     Port.monitor(port)
 
     {:ok,
-     ~M{id, src, dest, port, size: nil, status: :initiated, progress: nil, bytes_downloaded: nil, exit_status: nil, error_reason: nil}}
+     ~M{id, src, dest, from, port, size: nil, status: :initiated, progress: nil, bytes_downloaded: nil, exit_status: nil, error_reason: nil}}
   end
 
+  # terminate/2 is called if the GenServer traps exits
   @impl GenServer
-  # TODO INFORM CALLER
-  def terminate(reason, ~M{port} = state) do
-    Logger.info("Terminate wget-worker: reason=#{inspect(reason)} state=#{inspect(state)}")
+  def terminate(reason, ~M{id, port, from} = state) do
+    # Inform parent genserver
+    Process.send(from, {:terminating, id, state}, [])
+
+    Logger.info("Terminate wget-worker #{id}: reason=#{inspect(reason)} state=#{inspect(state)}")
     port_info = Port.info(port)
     os_pid = port_info[:os_pid]
+
+    # Kill orphan OS process if any
     System.cmd("kill", ["-9", "#{os_pid}"])
 
     :normal
@@ -42,12 +48,6 @@ defmodule Offsite.Downloaders.Wget.Worker do
 
   @impl GenServer
   def handle_call(:status, _from, state), do: {:reply, state, state}
-
-  @impl GenServer
-  def handle_cast(:cancel, state) do
-    cleanup(state)
-    {:stop, :cancel, %{state | status: :cancel, exit_status: :normal}}
-  end
 
   @impl GenServer
   def handle_info({port, {:data, "start:" <> filesize}}, ~M{port} = state) do
@@ -58,8 +58,6 @@ defmodule Offsite.Downloaders.Wget.Worker do
   def handle_info({port, {:data, "progress:" <> progress}}, ~M{port} = state) do
     {:noreply, %{state | progress: String.trim(progress)}}
   end
-
-  # TODO: wont get updated
 
   @impl GenServer
   def handle_info({port, {:data, "bytes:" <> bytes}}, ~M{port} = state) do
@@ -80,7 +78,6 @@ defmodule Offsite.Downloaders.Wget.Worker do
 
   @impl GenServer
   def handle_info({port, {:data, "error:" <> message}}, ~M{port} = state) do
-    cleanup(state)
     {:stop, :error, %{state | status: :error, error_reason: message, exit_status: :error}}
   end
 
@@ -107,9 +104,4 @@ defmodule Offsite.Downloaders.Wget.Worker do
   end
 
   defp get_command(src, dest), do: "#{@script_path} --src=#{src} --dest=#{dest}"
-
-  defp cleanup(~M{dest}) do
-    res = File.rm(dest)
-    Logger.info("Remove left over file: #{inspect(res)}")
-  end
 end

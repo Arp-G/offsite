@@ -8,8 +8,9 @@ defmodule Offsite.Downloaders.Download do
   typedstruct do
     @typedoc "A download"
 
-    field :id, String.t(), default: UUID.uuid1()
+    field :id, String.t()
     field :pid, pid()
+    field :name, String.t()
     field :src, String.t()
     field :dest, String.t()
     field :type, :normal | :torrent
