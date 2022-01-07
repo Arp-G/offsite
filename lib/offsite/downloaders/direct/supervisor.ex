@@ -1,4 +1,4 @@
-defmodule Offsite.Downloaders.Wget.Supervisor do
+defmodule Offsite.Downloaders.Direct.Supervisor do
   use DynamicSupervisor
   require Logger
 
@@ -12,7 +12,7 @@ defmodule Offsite.Downloaders.Wget.Supervisor do
 
   def add(args) do
     {:ok, pid} =
-      DynamicSupervisor.start_child(__MODULE__, {Offsite.Downloaders.Wget.Worker, args})
+      DynamicSupervisor.start_child(__MODULE__, {Offsite.Downloaders.Direct.Worker, args})
 
     pid
   end

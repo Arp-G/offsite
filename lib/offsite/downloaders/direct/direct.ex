@@ -1,18 +1,18 @@
-defmodule Offsite.Downloaders.Wget do
+defmodule Offsite.Downloaders.Direct do
   @moduledoc """
   GenServer which stores aggregates and stores state for all wget worker processes
   Exposes APIs to add, delete, list wget downloads.
 
   Examples:
 
-  {:ok, id} = Offsite.Downloaders.Wget.add("https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4", "/tmp/temp_video.vid")
-  Offsite.Downloaders.Wget.status(id)
-  Offsite.Downloaders.Wget.remove(id)
-  Offsite.Downloaders.Wget.list
+  {:ok, id} = Offsite.Downloaders.Direct.add("https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4", "/tmp/temp_video.vid")
+  Offsite.Downloaders.Direct.status(id)
+  Offsite.Downloaders.Direct.remove(id)
+  Offsite.Downloaders.Direct.list
   """
   use GenServer
   import ShorterMaps
-  alias Offsite.Downloaders.{Downloader, Download, Wget.Supervisor}
+  alias Offsite.Downloaders.{Downloader, Download, Direct.Supervisor}
 
   require Logger
 
@@ -39,7 +39,7 @@ defmodule Offsite.Downloaders.Wget do
 
   @impl GenServer
   def init(_args) do
-    Logger.info("Wget Server started")
+    Logger.info("Direct Server started")
     Process.send_after(self(), :fetch_all, @update_interval)
     {:ok, %{}}
   end
@@ -68,7 +68,7 @@ defmodule Offsite.Downloaders.Wget do
     id = UUID.uuid1()
 
     # Using start instead of start_link to avoid this parent process from getting terminated when worker terminates
-    pid = Offsite.Downloaders.Wget.Supervisor.add(~M{id, src, dest, from: self()})
+    pid = Offsite.Downloaders.Direct.Supervisor.add(~M{id, src, dest, from: self()})
 
     {
       :reply,
@@ -109,15 +109,11 @@ defmodule Offsite.Downloaders.Wget do
 
   @impl GenServer
   def handle_info({:terminating, id, last_child_state}, state) do
-    Logger.info("EXISTING STATE: #{inspect(state)}")
-
     {_old_value, state} =
       Map.get_and_update(state, id, fn
         current_value when is_nil(current_value) -> :pop
         current_value -> {current_value, merge_with_old_state(current_value, last_child_state)}
       end)
-
-    Logger.info("UPDATED STATE: #{inspect(state)}")
 
     Logger.info("Recieved last state from child: #{id}, new_state: #{inspect(state)}")
     {:noreply, state}
@@ -153,9 +149,9 @@ defmodule Offsite.Downloaders.Wget do
 
   defp merge_with_old_state(
          old_download,
-         ~M{size, status, progress, bytes_downloaded, error_reason}
+         ~M{size, status, bytes_downloaded, start_time, end_time, speed, error_reason}
        ) do
-    ~M{%Download old_download|size, status, progress, bytes_downloaded, message: error_reason}
+    ~M{%Download old_download|size, status, bytes_downloaded, start_time, end_time, speed, message: error_reason}
   end
 
   defp guess_filename(url) do
