@@ -15,10 +15,16 @@ config :offsite, OffsiteWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "2CKcFOPHkAWifscxp156xagkZyYbrlY8DoCHwFHwM5lLtFGV3WlrcZ+y4qgQsyzi",
   watchers: [
-    # Start the esbuild watcher by calling Esbuild.install_and_run(:default, args)
-    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]}
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    npx: [
+      "tailwindcss",
+      "--input=css/app.css",
+      "--output=../priv/static/assets/app.css",
+      "--postcss",
+      "--watch",
+      cd: Path.expand("../assets", __DIR__)
+    ]
   ]
-
 # ## SSL Support
 #
 # In order to use HTTPS in development, a self-signed

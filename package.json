@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "command-line-args": "^5.2.0",
-    "transmission": "^0.4.10",
-    "wget-improved": "^3.2.1"
-  }
-}
