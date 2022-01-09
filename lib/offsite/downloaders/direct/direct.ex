@@ -24,7 +24,7 @@ defmodule Offsite.Downloaders.Direct do
   def start_link(_opts), do: GenServer.start_link(__MODULE__, %{}, name: __MODULE__)
 
   @impl Downloader
-  def add(src, dest), do: GenServer.call(__MODULE__, {:add, src, dest})
+  def add(src), do: GenServer.call(__MODULE__, {:add, src})
 
   @impl Downloader
   def remove(id), do: GenServer.call(__MODULE__, {:remove, id})
@@ -64,8 +64,8 @@ defmodule Offsite.Downloaders.Direct do
   end
 
   @impl GenServer
-  def handle_call({:add, src, dest}, _from, state) do
-    id = UUID.uuid1()
+  def handle_call({:add, src}, _from, state) do
+    {id, dest} = Offsite.Helpers.get_download_destination()
 
     # Using start instead of start_link to avoid this parent process from getting terminated when worker terminates
     pid = Offsite.Downloaders.Direct.Supervisor.add(~M{id, src, dest, from: self()})

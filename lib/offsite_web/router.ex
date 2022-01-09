@@ -17,7 +17,7 @@ defmodule OffsiteWeb.Router do
   scope "/", OffsiteWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
+    live "/", DownloadsLive.Index , :index
   end
 
   # Other scopes may use custom stacks.

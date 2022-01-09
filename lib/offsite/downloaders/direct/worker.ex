@@ -98,6 +98,7 @@ defmodule Offsite.Downloaders.Direct.Worker do
 
   defp calc_speed(start_time, bytes_downloaded) do
     elapsed_time = DateTime.diff(DateTime.utc_now(), start_time)
+
     # Logger.info( "speed = #{if elapsed_time == 0, do: 0, else: Sizeable.filesize(bytes_downloaded / elapsed_time)}")
     if elapsed_time == 0, do: 0, else: Sizeable.filesize(bytes_downloaded / elapsed_time)
   end

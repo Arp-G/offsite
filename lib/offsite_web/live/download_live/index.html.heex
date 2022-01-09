@@ -1,0 +1,31 @@
+<h1>Listing Downloads</h1>
+
+<%= if @live_action in [:new, :edit] do %>
+  <.modal >
+    <.live_component
+      module={OffsiteWeb.DownloadLive.FormComponent}
+      id={@download.id || :new}
+      title={@page_title}
+      action={@live_action}
+      download={@download}
+      
+    />
+  </.modal>
+<% end %>
+
+<table>
+  <thead>
+    <tr>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody id="downloads">
+    <%= for download <- @downloads do %>
+      <tr id={"download-#{download.id}"}>
+
+        <div>{download.id}</div>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
