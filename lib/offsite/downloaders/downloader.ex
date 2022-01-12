@@ -6,7 +6,7 @@ defmodule Offsite.Downloaders.Downloader do
   @doc """
   Add a download
   """
-  @callback add(String.t(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  @callback add(String.t()) :: {:ok, String.t()} | {:error, String.t()}
 
   @doc """
   Remove or cancel a download

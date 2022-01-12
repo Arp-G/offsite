@@ -5,7 +5,7 @@ defmodule Offsite.Downloaders.Direct do
 
   Examples:
 
-  {:ok, id} = Offsite.Downloaders.Direct.add("https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4", "/tmp/temp_video.vid")
+  {:ok, id} = Offsite.Downloaders.Direct.add("https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4")
   Offsite.Downloaders.Direct.status(id)
   Offsite.Downloaders.Direct.remove(id)
   Offsite.Downloaders.Direct.list
