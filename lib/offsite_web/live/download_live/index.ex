@@ -31,5 +31,22 @@ defmodule OffsiteWeb.DownloadsLive.Index do
 
   defp list_downloads do
     Downloads.list_downloads()
+
+    # %{
+    #   "1f80d5c2-74ab-11ec-91b1-5e621e2e41ff" => %Offsite.Downloaders.Download{
+    #     bytes_downloaded: 3_346_708,
+    #     dest: "/tmp/1f80d5c2-74ab-11ec-91b1-5e621e2e41ff",
+    #     end_time: nil,
+    #     id: "1f80d5c2-74ab-11ec-91b1-5e621e2e41ff",
+    #     message: nil,
+    #     name: "file_example_MP4_1920_18MG.mp4",
+    #     pid: nil,
+    #     size: "17839845",
+    #     src: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4",
+    #     start_time: ~U[2022-01-13 19:58:06.188985Z],
+    #     status: :active,
+    #     type: :normal
+    #   }
+    # }
   end
 end

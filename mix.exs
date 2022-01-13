@@ -50,6 +50,7 @@ defmodule Offsite.MixProject do
       {:httpoison, "~> 1.8"},
       {:typed_struct, "~> 0.2.1"},
       {:shorter_maps, "~> 2.2"},
+      {:timex, "~> 3.7"},
       # {:credo, "~> 1.5"},
       {:dialyxir, "~> 0.5.0", only: [:dev], runtime: false}
     ]

@@ -21,7 +21,7 @@ defmodule Offsite.Downloaders.Direct.Worker do
       ~M{
         resp, fd, id, src, dest, from, size: 0, status: :initiated,
         bytes_downloaded: 0, exit_status: nil, error_reason: nil,
-        start_time: nil, end_time: nil, speed: 0
+        start_time: nil, end_time: nil
       }
     }
   end
@@ -77,12 +77,12 @@ defmodule Offsite.Downloaders.Direct.Worker do
   @impl GenServer
   def handle_info(
         ~M{%HTTPoison.AsyncChunk chunk},
-        ~M{start_time, resp, fd, bytes_downloaded} = state
+        ~M{resp, fd, bytes_downloaded} = state
       ) do
     IO.binwrite(fd, chunk)
     HTTPoison.stream_next(resp)
     bytes_downloaded = bytes_downloaded + byte_size(chunk)
-    {:noreply, ~M{state | bytes_downloaded, speed: calc_speed(start_time, bytes_downloaded)}}
+    {:noreply, ~M{state | bytes_downloaded}}
   end
 
   @impl GenServer
@@ -94,12 +94,5 @@ defmodule Offsite.Downloaders.Direct.Worker do
       :finish,
       ~M{state | status: :finish, exit_status: :normal, end_time: DateTime.utc_now()}
     }
-  end
-
-  defp calc_speed(start_time, bytes_downloaded) do
-    elapsed_time = DateTime.diff(DateTime.utc_now(), start_time)
-
-    # Logger.info( "speed = #{if elapsed_time == 0, do: 0, else: Sizeable.filesize(bytes_downloaded / elapsed_time)}")
-    if elapsed_time == 0, do: 0, else: Sizeable.filesize(bytes_downloaded / elapsed_time)
   end
 end

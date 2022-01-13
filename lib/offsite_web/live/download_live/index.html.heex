@@ -13,21 +13,20 @@
   </.modal> %>
 <%# <% end %>
 
-<table class="table-auto">
-  <thead>
+<table class="table-fixed w-full">
+  <thead class="bg-gray-50">
     <tr>
-      <th>Id</th>
-      <th>Filename</th>
-      <th>Downloaded</th>
-      <th>Status</th>
-      <th>Speed</th>
-      <th>Time left</th>
-      <th>Started at</th>
-      <th>Actions</th>
+      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Id</th>
+      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Filename</th>
+      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Downloaded</th>
+      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Status</th>
+      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Speed</th>
+      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Time left</th>
+      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Started at</th>
+      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Actions</th>
     </tr>
   </thead>
-  <tbody id="downloads">
-    <% test = [{"b7455526-73cb-11ec-a5de-f2892a94fdcb", %Offsite.Downloaders.Download{  bytes_downloaded: 10, dest: "/tmp/b7455526-73cb-11ec-a5de-f2892a94fdcb", end_time: nil,id: "b7455526-73cb-11ec-a5de-f2892a94fdcb",message: nil, name: "file_example_MP4_1920_18MG.mp4", pid: nil, size: 100, speed: 0, src: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4", start_time: nil, status: :initiated, type: :normal}}, {"b7455526-73cb-11ec-a5de-f2892a94fdcc", %Offsite.Downloaders.Download{  bytes_downloaded: 10, dest: "/tmp/b7455526-73cb-11ec-a5de-f2892a94fdcb", end_time: nil,id: "b7455526-73cb-11ec-a5de-f2892a94fdcc",message: nil, name: "file_example_MP4_1920_18MG.mp4", pid: nil, size: 50, speed: 0, src: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4", start_time: nil, status: :initiated, type: :normal}} ] %>
+  <tbody class="bg-white divide-y divide-gray-200">
     <%= for {{id, download}, index} <- Enum.with_index(@downloads) do %>
       <tr id={"download-#{id}"} class="m-2 bg-white shadow overflow-hidden sm:rounded-lg">
         <OffsiteWeb.DownloadComponent.render index={index} download={download} />

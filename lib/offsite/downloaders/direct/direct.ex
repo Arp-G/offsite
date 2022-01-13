@@ -149,9 +149,9 @@ defmodule Offsite.Downloaders.Direct do
 
   defp merge_with_old_state(
          old_download,
-         ~M{size, status, bytes_downloaded, start_time, end_time, speed, error_reason}
+         ~M{size, status, bytes_downloaded, start_time, end_time, error_reason}
        ) do
-    ~M{%Download old_download|size, status, bytes_downloaded, start_time, end_time, speed, message: error_reason}
+    ~M{%Download old_download|size, status, bytes_downloaded, start_time, end_time, message: error_reason}
   end
 
   defp guess_filename(url) do
