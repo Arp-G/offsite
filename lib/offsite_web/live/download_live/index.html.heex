@@ -14,22 +14,22 @@
 <%# <% end %>
 
 <table class="table-fixed w-full">
-  <thead class="bg-gray-50">
+  <thead class="bg-gray-300">
     <tr>
-      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Id</th>
-      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Filename</th>
-      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Downloaded</th>
-      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Status</th>
-      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Speed</th>
-      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Time left</th>
-      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Started at</th>
-      <th class="px-6 py-3 text-center text-xs font-large text-gray-500 uppercase tracking-wider">Actions</th>
+      <th class="download-header w-16">Id</th>
+      <th class="download-header w-52">Filename</th>
+      <th class="download-header w-52">Downloaded</th>
+      <th class="download-header w-24">Status</th>
+      <th class="download-header w-24">Speed</th>
+      <th class="download-header w-52">Time left</th>
+      <th class="download-header w-52">Elapsed time</th>
+      <th class="download-header w-52">Actions</th>
     </tr>
   </thead>
   <tbody class="bg-white divide-y divide-gray-200">
     <%= for {{id, download}, index} <- Enum.with_index(@downloads) do %>
       <tr id={"download-#{id}"} class="m-2 bg-white shadow overflow-hidden sm:rounded-lg">
-        <OffsiteWeb.DownloadComponent.render index={index} download={download} />
+        <DownloadComponent.render index={index} download={download} />
       </tr>
     <% end %>
   </tbody>

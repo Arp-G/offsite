@@ -4,6 +4,7 @@ defmodule OffsiteWeb.DownloadsLive.Index do
   import ShorterMaps
 
   alias Offsite.Downloads
+  alias OffsiteWeb.DownloadComponent
 
   @refresh_interval 300
 
@@ -14,7 +15,7 @@ defmodule OffsiteWeb.DownloadsLive.Index do
   end
 
   @impl true
-  def handle_event("delete", ~M{id}, socket) do
+  def handle_event("delete", ~m{id}, socket) do
     Downloads.delete_download(id)
 
     {:noreply,
@@ -39,7 +40,7 @@ defmodule OffsiteWeb.DownloadsLive.Index do
     #     end_time: nil,
     #     id: "1f80d5c2-74ab-11ec-91b1-5e621e2e41ff",
     #     message: nil,
-    #     name: "file_example_MP4_1920_18MG.mp4",
+    #     name: "file_example_MP4_1920_18MGxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.mp4",
     #     pid: nil,
     #     size: "17839845",
     #     src: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4",

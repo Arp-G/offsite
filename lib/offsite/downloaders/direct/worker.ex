@@ -12,23 +12,21 @@ defmodule Offsite.Downloaders.Direct.Worker do
     Logger.info("Start new wget worker: #{id}")
     # Makes your process call terminate/2 upon exit.
     Process.flag(:trap_exit, true)
-
-    resp = HTTPoison.get!(src, %{}, stream_to: self(), async: :once)
-    {:ok, fd} = File.open(dest, [:write, :binary])
+    Process.send_after(self(), :kickoff, 0)
 
     {
       :ok,
       ~M{
-        resp, fd, id, src, dest, from, size: 0, status: :initiated,
+        id, src, dest, from, size: 0, status: :initiate,
         bytes_downloaded: 0, exit_status: nil, error_reason: nil,
-        start_time: nil, end_time: nil
+        start_time: nil, end_time: nil, resp: nil, fd: nil
       }
     }
   end
 
   # terminate/2 is called if the GenServer traps exits
   @impl GenServer
-  def terminate(reason, ~M{id, fd, dest, from} = state) do
+  def terminate(reason, ~M{id, from} = state) do
     # Inform parent genserver
     Process.send(from, {:terminating, id, state}, [])
 
@@ -36,15 +34,28 @@ defmodule Offsite.Downloaders.Direct.Worker do
       "Terminate download-worker #{id}: reason=#{inspect(reason)} state=#{inspect(state)}"
     )
 
-    # Remove file
-    File.close(fd)
-    File.rm(dest)
+    state
+    |> Map.get(state, :fd)
+    |> File.close()
 
     :normal
   end
 
   @impl GenServer
   def handle_call(:status, _from, state), do: {:reply, state, state}
+
+  @impl GenServer
+  def handle_info(:kickoff, ~M{src, dest} = state) do
+    {:ok, fd} = File.open(dest, [:write, :binary])
+
+    case HTTPoison.get(src, %{}, stream_to: self(), async: :once) do
+      {:ok, resp} ->
+        {:noreply, ~M{state | resp, fd}}
+
+      {:error, ~M{%HTTPoison.Error reason}} ->
+        {:stop, reason, ~M{state | status: :error, error_reason: reason, exit_status: :error}}
+    end
+  end
 
   @impl GenServer
   def handle_info(~M{%HTTPoison.AsyncStatus code}, state) when code >= 400 do

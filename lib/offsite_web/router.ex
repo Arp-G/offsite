@@ -17,6 +17,7 @@ defmodule OffsiteWeb.Router do
   scope "/", OffsiteWeb do
     pipe_through :browser
 
+    get "/download/:id", PageController, :download
     live "/", DownloadsLive.Index, :index
   end
 

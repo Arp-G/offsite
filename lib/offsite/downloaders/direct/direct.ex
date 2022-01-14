@@ -30,7 +30,7 @@ defmodule Offsite.Downloaders.Direct do
   def remove(id), do: GenServer.call(__MODULE__, {:remove, id})
 
   @impl Downloader
-  def status(id), do: GenServer.call(__MODULE__, {:status, id})
+  def get(id), do: GenServer.call(__MODULE__, {:get, id})
 
   @impl Downloader
   def list(), do: GenServer.call(__MODULE__, :list)
@@ -45,7 +45,7 @@ defmodule Offsite.Downloaders.Direct do
   end
 
   @impl GenServer
-  def handle_call({:status, id}, _from, state) do
+  def handle_call({:get, id}, _from, state) do
     case Map.get(state, id) do
       nil ->
         {
@@ -155,10 +155,11 @@ defmodule Offsite.Downloaders.Direct do
   end
 
   defp guess_filename(url) do
-    url
-    |> URI.parse()
-    |> Map.fetch!(:path)
-    |> Path.basename()
-    |> String.trim()
+    path =
+      url
+      |> URI.parse()
+      |> Map.fetch!(:path)
+
+    if(is_nil(path), do: UUID.uuid1(), else: path |> Path.basename() |> String.trim())
   end
 end

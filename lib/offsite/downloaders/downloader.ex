@@ -14,9 +14,9 @@ defmodule Offsite.Downloaders.Downloader do
   @callback remove(String.t()) :: {:ok, String.t()} | {:error, String.t()}
 
   @doc """
-  Get download status for given id
+  Get the download struct for given id
   """
-  @callback status(String.t()) :: {:ok, Download.t()} | {:error, String.t()}
+  @callback get(String.t()) :: {:ok, Download.t()} | {:error, String.t()}
 
   @doc """
   Get all download status

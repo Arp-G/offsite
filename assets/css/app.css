@@ -9,3 +9,18 @@ Tailwind: it’s base styles, component classes, and utility classes.
 @tailwind components;
 
 @tailwind utilities;
+
+/* Custom tailwind classes */
+@layer components {
+  .download-row {
+    @apply px-6 py-3 text-center text-xs font-medium;
+  }
+
+  .status-pill {
+    @apply py-1 px-2 rounded-full text-xs font-bold ml-1
+  }
+
+  .download-header {
+    @apply px-6 py-3 text-center text-xs text-gray-700 uppercase tracking-wider
+  }
+}
