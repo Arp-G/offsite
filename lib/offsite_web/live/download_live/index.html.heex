@@ -1,36 +1,41 @@
-<h1>Listing Downloads</h1>
+<HeaderComponent.render />
 
-<%# <%= if @live_action in [:new, :edit] do %>
-  <%# <.modal >
-    <.live_component
-      module={OffsiteWeb.DownloadLive.FormComponent}
-      id={@download.id || :new}
-      title={@page_title}
-      action={@live_action}
-      download={@download}
-      
-    />
-  </.modal> %>
-<%# <% end %>
-
-<table class="table-fixed w-full">
-  <thead class="bg-gray-300">
-    <tr>
-      <th class="download-header w-16">Id</th>
-      <th class="download-header w-52">Filename</th>
-      <th class="download-header w-52">Downloaded</th>
-      <th class="download-header w-24">Status</th>
-      <th class="download-header w-24">Speed</th>
-      <th class="download-header w-52">Time left</th>
-      <th class="download-header w-52">Elapsed time</th>
-      <th class="download-header w-52">Actions</th>
-    </tr>
-  </thead>
-  <tbody class="bg-white divide-y divide-gray-200">
-    <%= for {{id, download}, index} <- Enum.with_index(@downloads) do %>
-      <tr id={"download-#{id}"} class="m-2 bg-white shadow overflow-hidden sm:rounded-lg">
-        <DownloadComponent.render index={index} download={download} />
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div class="m-auto">
+  <.live_component
+    module={AddDownloadComponent}
+    id={:new}
+  />
+  <div class="underline text-xs font-semibold text-right text-blue-600 hover:text-blue-800 fixed bottom-2 right-1">
+    <a href="/dashboard/os_mon"> Check Disk Usage </a>
+  </div>
+  
+  <%= if Enum.empty?(@downloads) do %>
+    <div class="w-fit m-auto mt-10">
+      <div class="font-semibold italic font-serif"> No downloads added </div>
+      <div class="text-8xl text-center"> 🤷🏼‍♂️ <div>
+    </div>
+  <% else %>
+    <div class="text-center m-2 text-xl font-semibold italic font-serif"> -: Downloads :-</div>
+    <table class="table-fixed w-full shadow">
+      <thead class="bg-gray-300">
+        <tr>
+          <th class="download-header w-16">Id</th>
+          <th class="download-header w-52">Filename</th>
+          <th class="download-header w-52">Downloaded</th>
+          <th class="download-header w-24">Status</th>
+          <th class="download-header w-24">Speed</th>
+          <th class="download-header w-52">Time left</th>
+          <th class="download-header w-52">Elapsed time</th>
+          <th class="download-header w-52">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <%= for {{id, download}, index} <- Enum.with_index(@downloads) do %>
+          <tr id={"download-#{id}"} class="m-2 bg-white shadow overflow-hidden sm:rounded-lg">
+            <DownloadComponent.render index={index} download={download} />
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+</div>

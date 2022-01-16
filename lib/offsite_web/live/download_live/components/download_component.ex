@@ -1,11 +1,11 @@
-defmodule OffsiteWeb.DownloadComponent do
+defmodule OffsiteWeb.Components.DownloadComponent do
   use Phoenix.Component
 
   import ShorterMaps
 
   alias Offsite.{Downloaders.Download, Helpers}
   alias Timex.{Duration, Format.Duration.Formatters.Humanized}
-  alias OffsiteWeb.DownloadComponent
+  alias OffsiteWeb.Components.DownloadComponent
   alias OffsiteWeb.Router.Helpers, as: RouteHelpers
 
   def render(assigns) do

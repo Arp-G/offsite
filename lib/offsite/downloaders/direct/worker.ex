@@ -70,6 +70,12 @@ defmodule Offsite.Downloaders.Direct.Worker do
   end
 
   @impl GenServer
+  def handle_info(~M{%HTTPoison.Error reason}, state) do
+    message = inspect(reason)
+    {:stop, message, ~M{state | status: :error, error_reason: message, exit_status: :error}}
+  end
+
+  @impl GenServer
   def handle_info(~M{%HTTPoison.AsyncHeaders headers}, ~M{resp} = state) do
     size =
       Enum.find(headers, fn
