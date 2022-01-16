@@ -66,7 +66,6 @@ defmodule Offsite.MixProject do
     [
       setup: ["deps.get"],
       "assets.deploy": [
-        "NODE_ENV=production tailwindcss --postcss --minify --input=assets/css/app.css --output=priv/static/assets/app.css",
         "esbuild default --minify",
         "phx.digest"
       ]
