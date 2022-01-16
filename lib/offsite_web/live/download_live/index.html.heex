@@ -8,6 +8,17 @@
   <div class="underline text-xs font-semibold text-right text-blue-600 hover:text-blue-800 fixed bottom-2 right-1">
     <a href="/dashboard/os_mon"> Check Disk Usage </a>
   </div>
+
+  <%= if @play_modal do %>
+    <VideoModal.modal>
+      <video
+        controls
+        preload="auto"
+      >
+        <source src={@play_modal} type="video/mp4" />
+      </video>
+    </VideoModal.modal>
+  <% end %>
   
   <%= if Enum.empty?(@downloads) do %>
     <div class="w-fit m-auto mt-10">
