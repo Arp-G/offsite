@@ -44,6 +44,7 @@ defmodule Offsite.MixProject do
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:jason, "~> 1.2"},
+      {:corsica, "~> 1.0"},
       {:plug_cowboy, "~> 2.5"},
       {:sizeable, "~> 1.0"},
       {:uuid, "~> 1.1"},

@@ -46,4 +46,10 @@ defmodule OffsiteWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug OffsiteWeb.Router
+
+  plug Corsica,
+    max_age: 600,
+    origins: "*",
+    allow_headers: :all,
+    allow_methods: :all
 end
