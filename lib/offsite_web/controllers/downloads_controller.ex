@@ -1,4 +1,4 @@
-defmodule OffsiteWeb.PageController do
+defmodule OffsiteWeb.DownloadsController do
   use OffsiteWeb, :controller
   import ShorterMaps
   alias Offsite.Downloads

@@ -1,4 +1,7 @@
 defmodule Offsite.Downloaders.Direct.Worker do
+  @moduledoc """
+  Worker Genserver for downloading a file
+  """
   use GenServer, restart: :temporary
   require Logger
   import ShorterMaps
@@ -9,7 +12,7 @@ defmodule Offsite.Downloaders.Direct.Worker do
 
   @impl GenServer
   def init(~M{id, src, dest, from}) do
-    Logger.info("Start new wget worker: #{id}")
+    Logger.info("Start new download worker: #{id}")
     # Makes your process call terminate/2 upon exit.
     Process.flag(:trap_exit, true)
     Process.send_after(self(), :kickoff, 0)
