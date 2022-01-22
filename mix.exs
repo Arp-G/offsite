@@ -52,6 +52,7 @@ defmodule Offsite.MixProject do
       {:typed_struct, "~> 0.2.1"},
       {:shorter_maps, "~> 2.2"},
       {:timex, "~> 3.7"},
+      {:reverse_proxy_plug, "~> 2.1"},
       # {:credo, "~> 1.5"},
       {:dialyxir, "~> 0.5.0", only: [:dev], runtime: false}
     ]

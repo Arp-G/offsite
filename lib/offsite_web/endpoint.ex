@@ -20,7 +20,7 @@ defmodule OffsiteWeb.Endpoint do
     at: "/",
     from: :offsite,
     gzip: false,
-    only: ~w(assets fonts images favicon.ico robots.txt)
+    only: ~w(transmission assets fonts images favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
@@ -40,16 +40,17 @@ defmodule OffsiteWeb.Endpoint do
   plug Plug.Parsers,
     parsers: [:urlencoded, :multipart, :json],
     pass: ["*/*"],
-    json_decoder: Phoenix.json_library()
+    json_decoder: Phoenix.json_library(),
+    body_reader: {OffsiteWeb.CacheBodyReader, :read_body, []}
 
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
   plug OffsiteWeb.Router
 
-  plug Corsica,
-    max_age: 600,
-    origins: "*",
-    allow_headers: :all,
-    allow_methods: :all
+  # plug Corsica,
+  #   max_age: 600,
+  #   origins: "*",
+  #   allow_headers: :all,
+  #   allow_methods: :all
 end
