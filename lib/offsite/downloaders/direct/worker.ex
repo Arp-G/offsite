@@ -87,7 +87,7 @@ defmodule Offsite.Downloaders.Direct.Worker do
       end)
       |> case do
         {"Content-Length", length} -> length || 0
-        false -> 0
+        nil -> 0
       end
 
     HTTPoison.stream_next(resp)

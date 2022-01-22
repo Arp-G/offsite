@@ -23,6 +23,19 @@ defmodule OffsiteWeb.Router do
     live_dashboard "/dashboard", metrics: OffsiteWeb.Telemetry
   end
 
+  scope "/" do
+    pipe_through :api
+
+    forward "/rpc", ReverseProxyPlug,
+      upstream: "http://127.0.0.1:9091/transmission/rpc",
+      error_callback: &__MODULE__.log_reverse_proxy_error/1
+
+    def log_reverse_proxy_error(error) do
+      require Logger
+      Logger.warn("ReverseProxyPlug network error: #{inspect(error)}")
+    end
+  end
+
   # Plug defination for Basic auth
   defp auth(conn, _opts) do
     username = System.fetch_env!("AUTH_USERNAME")

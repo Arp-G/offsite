@@ -19,11 +19,11 @@ defmodule OffsiteWeb.DownloadsController do
         |> put_resp_header("accept-ranges", "bytes")
         |> put_resp_header(
           "content-range",
-          "bytes #{bytes_offset}-#{String.to_integer(size) - 1}/#{size}"
+          "bytes #{bytes_offset}-#{Offsite.Helpers.to_int(size) - 1}/#{size}"
         )
         |> put_resp_header("content-disposition", "attachment; filename=\"#{name}\"")
         # 206 Partial Content
-        |> send_file(206, dest, bytes_offset, String.to_integer(size) - bytes_offset)
+        |> send_file(206, dest, bytes_offset, Offsite.Helpers.to_int(size) - bytes_offset)
 
       {:error, _} ->
         send_resp(conn, 204, "")
