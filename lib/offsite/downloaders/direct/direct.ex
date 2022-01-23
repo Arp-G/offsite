@@ -1,14 +1,14 @@
 defmodule Offsite.Downloaders.Direct do
   @moduledoc """
-  GenServer which stores aggregates and stores state for all wget worker processes
-  Exposes APIs to add, delete, list wget downloads.
+  GenServer which stores aggregates and stores state for all download worker processes
+  Exposes APIs to add, delete, list downloads.
 
   Examples:
 
   {:ok, id} = Offsite.Downloaders.Direct.add("https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4")
+  Offsite.Downloaders.Direct.list()
   Offsite.Downloaders.Direct.get(id)
   Offsite.Downloaders.Direct.remove(id)
-  Offsite.Downloaders.Direct.list()
   """
   use GenServer
   import ShorterMaps
@@ -76,7 +76,7 @@ defmodule Offsite.Downloaders.Direct do
       Map.put(
         state,
         id,
-        ~M{%Download id, pid, src, dest, name: guess_filename(src), type: :normal}
+        ~M{%Download id, pid, src, dest, name: guess_filename(src)}
       )
     }
   end
