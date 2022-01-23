@@ -3,7 +3,6 @@ defmodule OffsiteWeb.Components.AddDownloadComponent do
 
   import ShorterMaps
   alias Offsite.Downloaders.Direct
-  alias Offsite.Downloads
 
   @impl true
   def mount(socket) do
@@ -30,7 +29,7 @@ defmodule OffsiteWeb.Components.AddDownloadComponent do
 
     {
       :noreply,
-      assign(socket, %{downloads: Downloads.list_downloads(), url: nil, download_disabled: true})
+      assign(socket, %{downloads: Direct.list(), url: nil, download_disabled: true})
     }
   end
 
