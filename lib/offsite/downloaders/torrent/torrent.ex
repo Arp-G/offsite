@@ -49,6 +49,7 @@ defmodule Offsite.Downloaders.Torrent do
   @impl GenServer
   def handle_call({:get, id}, _from, state) do
     id = inspect(id)
+
     case Map.get(state, id) do
       nil ->
         {
@@ -94,6 +95,7 @@ defmodule Offsite.Downloaders.Torrent do
   @impl GenServer
   def handle_call({:remove, id}, _from, state) do
     id = inspect(id)
+
     case Map.get(state, id) do
       ~M{%TorrentDownload hashId} ->
         payload = Jason.encode!(~m{id: hashId})

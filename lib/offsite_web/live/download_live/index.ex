@@ -4,8 +4,9 @@ defmodule OffsiteWeb.DownloadsLive.Index do
   import ShorterMaps
 
   alias OffsiteWeb.Router.Helpers, as: RouteHelpers
-  alias Offsite.Downloads
   alias Offsite.Downloaders.Download
+
+  alias Offsite.Downloaders.{Direct, Torrent}
 
   alias OffsiteWeb.Components.{
     AddDownloadComponent,
@@ -19,14 +20,33 @@ defmodule OffsiteWeb.DownloadsLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     Process.send_after(self(), :tick, 0)
-    {:ok, assign(socket, %{downloads: Downloads.list_downloads(), play_modal: false})}
+
+    {:ok,
+     assign(socket, %{
+       tab: "direct",
+       downloads: Direct.list(),
+       torrent_downloads: Torrent.list(),
+       play_modal: false
+     })}
   end
 
   @impl true
-  def handle_event("delete", ~m{id}, socket) do
-    Downloads.delete_download(id)
+  def handle_event("delete", %{"id" => id, "type" => "direct"}, socket) do
+    Direct.remove(id)
 
-    {:noreply, assign(socket, :downloads, Downloads.list_downloads())}
+    {:noreply, assign(socket, :downloads, Direct.list())}
+  end
+
+  @impl true
+  def handle_event("delete", %{"id" => id, "type" => "torrent"}, socket) do
+    Torrent.remove(id)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("change-tab", %{"tab" => tab}, socket) do
+    {:noreply, assign(socket, :tab, tab)}
   end
 
   @impl true
@@ -45,13 +65,17 @@ defmodule OffsiteWeb.DownloadsLive.Index do
 
   @impl true
   def handle_event("close-play-modal", _params, socket) do
-    IO.inspect("modal close")
     {:noreply, assign(socket, :play_modal, false)}
   end
 
   @impl true
   def handle_info(:tick, socket) do
+    socket =
+      if socket.assigns.tab == "direct",
+        do: assign(socket, :downloads, Direct.list()),
+        else: assign(socket, :torrent_downloads, Torrent.list())
+
     Process.send_after(self(), :tick, @refresh_interval)
-    {:noreply, assign(socket, :downloads, Downloads.list_downloads())}
+    {:noreply, socket}
   end
 end

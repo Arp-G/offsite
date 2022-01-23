@@ -1,11 +1,10 @@
 defmodule OffsiteWeb.DownloadsController do
   use OffsiteWeb, :controller
   import ShorterMaps
-  alias Offsite.Downloads
-  alias Offsite.Downloaders.Download
+  alias Offsite.Downloaders.{Direct, TorrentDownload, Download}
 
   def download(conn, ~m{id}) do
-    case Downloads.get_download(id) do
+    case Direct.get(id) do
       {:ok, ~M{%Download name, dest, size}} ->
         # The range header is send for resumable downloads
         bytes_offset =
