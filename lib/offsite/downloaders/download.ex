@@ -13,7 +13,6 @@ defmodule Offsite.Downloaders.Download do
     field :name, String.t()
     field :src, String.t()
     field :dest, String.t()
-    field :type, :normal | :torrent
     field :status, :initiate | :active | :finish | :error, default: :initiate
     field :size, non_neg_integer(), default: 0
     field :bytes_downloaded, non_neg_integer(), default: 0

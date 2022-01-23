@@ -15,7 +15,8 @@ defmodule Offsite.Application do
       # Start the Endpoint (http/https)
       OffsiteWeb.Endpoint,
       Offsite.Downloaders.Direct.Supervisor,
-      Offsite.Downloaders.Direct
+      Offsite.Downloaders.Direct,
+      Offsite.Downloaders.Torrent
       # Start a worker by calling: Offsite.Worker.start_link(arg)
       # {Offsite.Worker, arg}
     ]
