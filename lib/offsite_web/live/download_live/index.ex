@@ -4,7 +4,6 @@ defmodule OffsiteWeb.DownloadsLive.Index do
   import ShorterMaps
 
   alias OffsiteWeb.Router.Helpers, as: RouteHelpers
-  alias Offsite.Downloaders.Download
 
   alias Offsite.Downloaders.{Direct, Torrent}
 
@@ -50,11 +49,7 @@ defmodule OffsiteWeb.DownloadsLive.Index do
   end
 
   @impl true
-  def handle_event(
-        "open-play-modal",
-        ~m{id},
-        %Phoenix.LiveView.Socket{assigns: ~M{downloads}} = socket
-      ) do
+  def handle_event("open-play-modal", ~m{id}, socket) do
     {:noreply,
      assign(
        socket,
@@ -78,4 +73,11 @@ defmodule OffsiteWeb.DownloadsLive.Index do
     Process.send_after(self(), :tick, @refresh_interval)
     {:noreply, socket}
   end
+
+  # Helpers
+
+  def active_tab_class("direct", "direct"), do: "bg-gray-300"
+  def active_tab_class("direct", _tab), do: nil
+  def active_tab_class("torrent", "torrent"), do: "bg-gray-300"
+  def active_tab_class("torrent", _tab), do: nil
 end

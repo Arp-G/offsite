@@ -3,12 +3,14 @@
 <div class="m-auto">
   <ul class="nav nav-tabs flex flex-col md:flex-row flex-wrap list-none border-b-0 pl-0 mb-4">
     <li>
-      <a class="font-medium border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-2
-                hover:border-transparent hover:bg-gray-100 focus:border-transparent active" phx-click="change-tab" phx-value-tab={"direct"}>Downloads</a>
+      <a class={"font-medium border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-2
+                hover:border-transparent hover:bg-gray-500 focus:border-transparent cursor-pointer
+                #{active_tab_class("direct", @tab)}"} phx-click="change-tab" phx-value-tab={"direct"}>Downloads</a>
     </li>
     <li>
-      <a class="font-medium border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-2
-                hover:border-transparent hover:bg-gray-100 focus:border-transparent active" phx-click="change-tab" phx-value-tab={"torrent"}>Torrents</a>
+      <a class={"font-medium border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-2
+                hover:border-transparent hover:bg-gray-500 focus:border-transparent cursor-pointer
+                #{active_tab_class("torrent", @tab)}"} phx-click="change-tab" phx-value-tab={"torrent"}>Torrents</a>
     </li>
   </ul>
 
