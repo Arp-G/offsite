@@ -1,6 +1,5 @@
-transmission-daemon -f
+TODO
 
-{ok, server_pid} = Transmission.start_link("http://localhost:9091/transmission/", "transmission", "transmission")
-
-client=Transmission.Api.new("http://localhost:9091/transmission/", "transmission", "transmission")
-
+add a way to restart transmission daemon from ui
+the data from transmission is not good enough, if torrent in paused and started the downloaded bytes goes wrong and eta also
+check with multiple torrents

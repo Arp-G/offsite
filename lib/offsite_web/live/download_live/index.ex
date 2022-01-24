@@ -10,6 +10,7 @@ defmodule OffsiteWeb.DownloadsLive.Index do
   alias OffsiteWeb.Components.{
     AddDownloadComponent,
     DownloadComponent,
+    TorrentDownloadComponent,
     HeaderComponent,
     VideoModal
   }

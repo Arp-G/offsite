@@ -33,5 +33,6 @@ defmodule Offsite.Downloaders.TorrentDownload do
     field :rateUpload, String.t()
     field :eta, String.t()
     field :bytes_downloaded, non_neg_integer(), default: 0
+    field :start_time, DateTime.t()
   end
 end

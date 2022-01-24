@@ -149,7 +149,8 @@ defmodule Offsite.Downloaders.Torrent do
                              "status" => status,
                              "sizeWhenDone" => sizeWhenDone,
                              "desiredAvailable" => desiredAvailable,
-                             "eta" => eta
+                             "eta" => eta,
+                             "addedDate" => addedDate
                            }
                          } ->
             {
@@ -167,7 +168,8 @@ defmodule Offsite.Downloaders.Torrent do
                 dest: downloadDir, 
                 size: sizeWhenDone, 
                 eta,
-                bytes_downloaded: desiredAvailable 
+                bytes_downloaded: desiredAvailable,
+                start_time: DateTime.from_unix(addedDate)
               }
             }
           end)
