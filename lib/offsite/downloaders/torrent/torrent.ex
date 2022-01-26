@@ -86,7 +86,7 @@ defmodule Offsite.Downloaders.Torrent do
           Map.put(state, id, %TorrentDownload{id: id})
         }
 
-      %{"success" => false, "reason" => reason} ->
+      %{"success" => false, "result" => reason} ->
         Logger.warn("Failed to add torrent due to error: #{reason}")
         {:reply, {:error, reason}, state}
     end
