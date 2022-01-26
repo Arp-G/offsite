@@ -20,17 +20,6 @@
       module={AddDownloadComponent}
       id={:new}
     />
-
-    <%= if @play_modal do %>
-      <VideoModal.modal>
-        <video
-          controls
-          preload="auto"
-        >
-          <source src={@play_modal} type="video/mp4" />
-        </video>
-      </VideoModal.modal>
-    <% end %>
     
     <%= if Enum.empty?(@downloads) do %>
       <div class="w-fit m-auto mt-10">
@@ -38,7 +27,8 @@
         <div class="text-8xl text-center"> 🤷🏼‍♂️ <div>
       </div>
     <% else %>
-      <div class="text-center m-2 text-xl font-semibold italic font-serif"> -: Downloads :-</div>
+
+    <div class="text-center m-2 text-xl font-semibold italic font-serif"> -: Downloads :-</div>
       <table class="table-fixed w-full shadow">
         <thead class="bg-gray-300">
           <tr>
@@ -67,6 +57,10 @@
       module={AddTorrentDownloadComponent}
       id={:new}
     />
+
+    <%= if @torrent_files_modal do %>
+      <TorrentFilesModal.render torrent={@torrent_files_modal} />
+    <% end %>
 
     <%= if Enum.empty?(@torrent_downloads) do %>
       <div class="w-fit m-auto mt-10">
@@ -97,9 +91,19 @@
         </tbody>
       </table>
     <% end %>
-
-
   <% end %>
+
+  <%= if @play_modal do %>
+    <Modal.render>
+      <video
+        controls
+        preload="auto"
+      >
+        <source src={@play_modal} type="video/mp4" />
+      </video>
+    </Modal.render>
+  <% end %>
+
 
   <div class="underline text-xs font-semibold text-right text-blue-600 hover:text-blue-800 fixed bottom-2 right-1">
     <a href="/dashboard/os_mon"> Check Disk Usage </a>

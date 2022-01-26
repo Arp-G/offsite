@@ -13,6 +13,7 @@ defmodule Offsite.Downloaders.Torrent do
   use GenServer
   import ShorterMaps
   alias Offsite.Downloaders.{Downloader, TorrentDownload}
+  alias Offsite.Helpers
 
   require Logger
 
@@ -34,6 +35,19 @@ defmodule Offsite.Downloaders.Torrent do
   @impl Downloader
   def get(id), do: GenServer.call(__MODULE__, {:get, id})
 
+  def get(id, path) do
+    file =
+      with {:ok, download} <- get(id) do
+        Enum.find(download.files, fn file -> file["name"] == path end)
+      end
+
+    if is_nil(file) do
+      {:error, :not_found}
+    else
+      {:ok, file}
+    end
+  end
+
   @impl Downloader
   def list(), do: GenServer.call(__MODULE__, :list)
 
@@ -48,7 +62,7 @@ defmodule Offsite.Downloaders.Torrent do
 
   @impl GenServer
   def handle_call({:get, id}, _from, state) do
-    id = inspect(id)
+    id = id |> Helpers.to_int() |> inspect()
 
     case Map.get(state, id) do
       nil ->

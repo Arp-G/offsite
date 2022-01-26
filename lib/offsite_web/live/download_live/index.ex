@@ -2,10 +2,10 @@ defmodule OffsiteWeb.DownloadsLive.Index do
   use OffsiteWeb, :live_view
 
   import ShorterMaps
-
   alias OffsiteWeb.Router.Helpers, as: RouteHelpers
 
   alias Offsite.Downloaders.{Direct, Torrent}
+  alias Offsite.Helpers
 
   alias OffsiteWeb.Components.{
     AddDownloadComponent,
@@ -13,10 +13,11 @@ defmodule OffsiteWeb.DownloadsLive.Index do
     DownloadComponent,
     TorrentDownloadComponent,
     HeaderComponent,
-    VideoModal
+    Modal,
+    TorrentFilesModal
   }
 
-  @refresh_interval 300
+  @refresh_interval 700
   @flash_interval 3000
 
   @impl true
@@ -28,7 +29,8 @@ defmodule OffsiteWeb.DownloadsLive.Index do
        tab: "direct",
        downloads: Direct.list(),
        torrent_downloads: Torrent.list(),
-       play_modal: false
+       play_modal: false,
+       torrent_files_modal: false
      })}
   end
 
@@ -68,18 +70,51 @@ defmodule OffsiteWeb.DownloadsLive.Index do
   end
 
   @impl true
-  def handle_event("open-play-modal", ~m{id}, socket) do
+  def handle_event("open-modal-direct", %{"id" => id, "type" => "play-modal-direct"}, socket) do
     {:noreply,
      assign(
        socket,
        :play_modal,
-       RouteHelpers.downloads_path(OffsiteWeb.Endpoint, :download, id)
+       RouteHelpers.downloads_path(OffsiteWeb.Endpoint, :download, id, type: "direct")
      )}
   end
 
   @impl true
-  def handle_event("close-play-modal", _params, socket) do
-    {:noreply, assign(socket, :play_modal, false)}
+  def handle_event(
+        "open-modal-torrent",
+        %{"path" => path, "type" => "play-modal-torrent"},
+        socket
+      ) do
+    {:noreply,
+     assign(
+       socket,
+       %{
+         play_modal:
+           RouteHelpers.downloads_path(
+             OffsiteWeb.Endpoint,
+             :download,
+             socket.assigns.torrent_files_modal,
+             type: "torrent-file",
+             path: path
+           ),
+         torrent_files_modal: false
+       }
+     )}
+  end
+
+  @impl true
+  def handle_event("open-modal-direct", %{"id" => id, "type" => "torrent-modal"}, socket) do
+    {:ok, torrent} =
+      id
+      |> Helpers.to_int()
+      |> Torrent.get()
+
+    {:noreply, assign(socket, :torrent_files_modal, torrent)}
+  end
+
+  @impl true
+  def handle_event("close-modal", _params, socket) do
+    {:noreply, assign(socket, %{play_modal: false, torrent_files_modal: false})}
   end
 
   @impl true
@@ -88,6 +123,19 @@ defmodule OffsiteWeb.DownloadsLive.Index do
       if socket.assigns.tab == "direct",
         do: assign(socket, :downloads, Direct.list()),
         else: assign(socket, :torrent_downloads, Torrent.list())
+
+    # Refresh torrent data in modal
+    socket =
+      if socket.assigns.torrent_files_modal do
+        {:ok, torrent} =
+          socket.assigns.torrent_files_modal.id
+          |> Helpers.to_int()
+          |> Torrent.get()
+
+        assign(socket, :torrent_files_modal, torrent)
+      else
+        socket
+      end
 
     Process.send_after(self(), :tick, @refresh_interval)
     {:noreply, socket}
