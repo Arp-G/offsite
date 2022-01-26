@@ -65,13 +65,22 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
     end
   end
 
+  def time_left(~M{%TorrentDownload eta}) when is_nil(eta), do: "NA"
+
   def time_left(~M{%TorrentDownload eta}) do
     eta
     |> Duration.from_seconds()
     |> Humanized.format()
   end
 
-  def get_speed(assigns) do
+  def get_speed(%{download: ~M{%TorrentDownload rateDownload, rateUpload}} = assigns)
+      when is_nil(rateDownload) or is_nil(rateUpload) do
+    ~H"""
+    NA
+    """
+  end
+
+  def get_speed(%{download: ~M{%TorrentDownload rateDownload, rateUpload}} = assigns) do
     ~H"""
       <div class="flex flex-row mb-1" title="Download Speed">
         <div class="w-min pt-1">
@@ -102,8 +111,6 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
       </div>
     """
   end
-
-  def get_speed(_download), do: "NA"
 
   def actions(%{download: ~M{%TorrentDownload id, status}} = assigns) do
     ~H"""

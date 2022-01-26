@@ -63,6 +63,11 @@
     <% end %>
   <% else %>
 
+    <.live_component
+      module={AddTorrentDownloadComponent}
+      id={:new}
+    />
+
     <%= if Enum.empty?(@torrent_downloads) do %>
       <div class="w-fit m-auto mt-10">
         <div class="font-semibold italic font-serif"> No active torrent downloads </div>

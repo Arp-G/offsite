@@ -9,6 +9,7 @@ defmodule OffsiteWeb.DownloadsLive.Index do
 
   alias OffsiteWeb.Components.{
     AddDownloadComponent,
+    AddTorrentDownloadComponent,
     DownloadComponent,
     TorrentDownloadComponent,
     HeaderComponent,
@@ -16,6 +17,7 @@ defmodule OffsiteWeb.DownloadsLive.Index do
   }
 
   @refresh_interval 300
+  @flash_interval 3000
 
   @impl true
   def mount(_params, _session, socket) do
@@ -30,18 +32,32 @@ defmodule OffsiteWeb.DownloadsLive.Index do
      })}
   end
 
+  # Invoked after mount or whenever there is a live navigation event
+  # Defining this is required to show flash messages from live components
+  @impl true
+  def handle_params(_params, _uri, socket) do
+    Process.send_after(self, :clear_flash, @flash_interval)
+    {:noreply, socket}
+  end
+
   @impl true
   def handle_event("delete", %{"id" => id, "type" => "direct"}, socket) do
     Direct.remove(id)
 
-    {:noreply, assign(socket, :downloads, Direct.list())}
+    socket = socket |> put_flash(:info, "Removed download!") |> assign(:downloads, Direct.list())
+
+    Process.send_after(self, :clear_flash, @flash_interval)
+
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("delete", %{"id" => id, "type" => "torrent"}, socket) do
     Torrent.remove(id)
 
-    {:noreply, socket}
+    Process.send_after(self, :clear_flash, @flash_interval)
+
+    {:noreply, put_flash(socket, :info, "Removed torrent download!")}
   end
 
   @impl true
@@ -74,6 +90,9 @@ defmodule OffsiteWeb.DownloadsLive.Index do
     Process.send_after(self(), :tick, @refresh_interval)
     {:noreply, socket}
   end
+
+  @impl true
+  def handle_info(:clear_flash, socket), do: {:noreply, clear_flash(socket)}
 
   # Helpers
 
