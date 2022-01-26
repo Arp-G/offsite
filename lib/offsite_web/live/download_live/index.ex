@@ -53,9 +53,11 @@ defmodule OffsiteWeb.DownloadsLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id, "type" => "torrent"}, socket) do
-    Torrent.remove(id)
+    id
+    |> Offsite.Helpers.to_int()
+    |> Torrent.remove()
 
-    Process.send_after(self, :clear_flash, @flash_interval)
+    Process.send_after(self(), :clear_flash, @flash_interval)
 
     {:noreply, put_flash(socket, :info, "Removed torrent download!")}
   end
