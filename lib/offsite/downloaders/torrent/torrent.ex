@@ -148,7 +148,7 @@ defmodule Offsite.Downloaders.Torrent do
                              "rateUpload" => rateUpload,
                              "status" => status,
                              "sizeWhenDone" => sizeWhenDone,
-                             "desiredAvailable" => desiredAvailable,
+                             "downloadedEver" => desiredAvailable,
                              "eta" => eta,
                              "addedDate" => addedDate
                            }
