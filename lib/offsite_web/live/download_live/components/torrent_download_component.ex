@@ -3,7 +3,7 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
 
   import ShorterMaps
 
-  alias Offsite.{Downloaders.TorrentDownload, Helpers}
+  alias Offsite.Downloaders.TorrentDownload
   alias Timex.{Duration, Format.Duration.Formatters.Humanized}
   alias OffsiteWeb.Components.TorrentDownloadComponent
   alias OffsiteWeb.Router.Helpers, as: RouteHelpers
@@ -19,7 +19,7 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
       <td class="download-row"> <TorrentDownloadComponent.zipping_status download={@torrent} /> </td>
       <td class="download-row"> <TorrentDownloadComponent.get_speed download={@torrent} /> </td>
       <td class="download-row"> <%= time_left(@torrent) %> </td>
-      <td class="download-row"> <TorrentDownloadComponent.actions download={@torrent} /> </td>
+      <td class="download-row flex flex-row justify-center"> <TorrentDownloadComponent.actions download={@torrent} /> </td>
     """
   end
 
@@ -104,7 +104,7 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
 
   def get_speed(%{download: ~M{%TorrentDownload rateDownload, rateUpload}} = assigns) do
     ~H"""
-      <div class="flex flex-row mb-1" title="Download Speed">
+      <div class="flex flex-row mb-1 mr-4" title="Download Speed">
         <div class="w-min pt-1">
           <svg enable-background="new 0 0 512 512" width="20" height="20" version="1.1" viewBox="0 0 512 512" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
             <polygon points="48.872 290.67 115.69 223.85 195.87 304.03 195.87 10.043 316.13 10.043 316.13 304.03 396.31 223.85 463.13 290.67 256 497.8" fill="#00B4D7"/>
@@ -118,7 +118,7 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
         </span>
       </div>
       <hr/>
-      <div class="flex flex-row" title="Upload Speed">
+      <div class="flex flex-row mr-4 mb-1" title="Upload Speed">
         <div class="w-min pt-1"> 
           <svg enable-background="new 0 0 512 512" width="20" height="20" version="1.1" viewBox="0 0 512 512" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
             <polygon points="463.13 221.33 396.31 288.15 316.13 207.97 316.13 501.96 195.87 501.96 195.87 207.97 115.69 288.15 48.871 221.33 256 14.202" fill="#00B4D7"/>
@@ -134,15 +134,32 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
     """
   end
 
-  def actions(%{download: ~M{%TorrentDownload id, status}} = assigns) do
+  def actions(%{download: ~M{%TorrentDownload id, zip_status}} = assigns) do
     ~H"""
-    <div class="flex flex-row text-red justify-center gap-2" phx-click="open-modal-direct" phx-value-id={id} phx-value-type={"torrent-modal"}>
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 cursor-pointer transition duration-100 hover:scale-110" viewBox="0 0 20 20" fill="green">
-        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+    <%= if zip_status == :done do %>
+      <a 
+      class="mr-2 mt-4 text-red justify-center gap-2" 
+      title="Download torrent zip"
+      href={
+        RouteHelpers.downloads_path(
+        OffsiteWeb.Endpoint,
+        :download,
+        id,
+        type: "torrent-zip"
+      )}
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 cursor-pointer transition duration-100 hover:scale-110" viewBox="0 0 20 20" fill="green">
+          <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+        </svg>
+      </a>
+    <% end %>
+    <div title="Download/Stream torrent files" class="mr-2 mt-4 text-red justify-center gap-2" phx-click="open-modal-direct" phx-value-id={id} phx-value-type={"torrent-modal"}>
+      <svg version="1.1" class="h-7 w-7 cursor-pointer transition duration-100 hover:scale-110" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 400 400" style="enable-background:new 0 0 400 400;" xml:space="preserve"><g id="XMLID_807_">
+        <g id="XMLID_808_"><polygon id="XMLID_75_" style="fill:#ACABB1;" points="90,320 90,0 290,0 350,60 350,320 "/><polygon id="XMLID_809_" style="fill:#818085;" points="290,0 350,60 290,60 "/></g><g id="XMLID_810_"><polygon id="XMLID_72_" style="fill:#EEEEEF;" points="70,360 70,40 270,40 330,100 330,360 "/><polygon id="XMLID_811_" style="fill:#DEDDE0;" points="270,40 330,100 270,100 "/></g><polygon id="XMLID_68_" style="fill:#78B9EB;" points="50,400 50,80 250,80 310,140 310,400 "/><polygon id="XMLID_812_" style="fill:#5A8BB0;" points="310,253.75 50,400 310,400 "/><rect id="XMLID_813_" x="110" y="200" style="fill:#DEDDE0;" width="140" height="20"/><rect id="XMLID_814_" x="110" y="240" style="fill:#DEDDE0;" width="140" height="20"/><rect id="XMLID_815_" x="110" y="160" style="fill:#FFFFFF;" width="70" height="20"/><rect id="XMLID_816_" x="110" y="200" style="fill:#FFFFFF;" width="70" height="20"/><rect id="XMLID_817_" x="110" y="240" style="fill:#FFFFFF;" width="70" height="20"/><rect id="XMLID_818_" x="110" y="280" style="fill:#DEDDE0;" width="140" height="20"/><rect id="XMLID_819_" x="110" y="280" style="fill:#FFFFFF;" width="70" height="20"/><rect id="XMLID_820_" x="110" y="320" style="fill:#DEDDE0;" width="140" height="20"/><rect id="XMLID_821_" x="110" y="320" style="fill:#FFFFFF;" width="70" height="20"/><polygon id="XMLID_822_" style="fill:#1E2E3B;" points="250,80 310,140 250,140 "/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g>
       </svg>
     </div>
-    <div class="flex flex-row text-red justify-center gap-2">
-      <button title="Delete" data-confirm="Are you sure?" phx-click="delete" phx-value-id={id} phx-value-type={"torrent"}>
+    <div class="mr-2 mt-4 text-red justify-center gap-2">
+      <button title="Delete torrent" data-confirm="Are you sure?" phx-click="delete" phx-value-id={id} phx-value-type={"torrent"}>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 cursor-pointer transition duration-100 hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="red">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
         </svg>
