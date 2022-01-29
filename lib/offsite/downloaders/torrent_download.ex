@@ -27,6 +27,7 @@ defmodule Offsite.Downloaders.TorrentDownload do
           | :isolated,
           default: :initiate
 
+    field :zip_status, :pending | :enqueued | :working | :done | :error, default: :pending
     field :size, non_neg_integer(), default: 0
     field :percentDone, String.t()
     field :rateDownload, String.t()

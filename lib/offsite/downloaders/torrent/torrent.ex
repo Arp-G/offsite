@@ -13,6 +13,7 @@ defmodule Offsite.Downloaders.Torrent do
   use GenServer
   import ShorterMaps
   alias Offsite.Downloaders.{Downloader, TorrentDownload}
+  alias Offsite.Zipper.{ZipperQueue, ZipperWorker}
   alias Offsite.Helpers
 
   require Logger
@@ -46,6 +47,10 @@ defmodule Offsite.Downloaders.Torrent do
     else
       {:ok, file}
     end
+  end
+
+  def update_zipping_status(id, status) do
+    GenServer.cast(__MODULE__, {:zip, id, status})
   end
 
   @impl Downloader
@@ -121,6 +126,8 @@ defmodule Offsite.Downloaders.Torrent do
 
         case Jason.decode!(resp) do
           %{"success" => true} ->
+            ZipperWorker.remove_zip(id)
+
             {
               :reply,
               {:ok, :removed},
@@ -139,6 +146,17 @@ defmodule Offsite.Downloaders.Torrent do
 
   @impl GenServer
   def handle_call(:list, _from, state), do: {:reply, state, state}
+
+  @impl GenServer
+  def handle_cast({:zip, id, status}, state) when status in [:working, :done, :error] do
+    new_state =
+      with download when not is_nil(download) <- Map.get(state, id) do
+        download = ~M{%TorrentDownload download | zip_status: status}
+        Map.put(state, id, download)
+      end || state
+
+    {:noreply, new_state}
+  end
 
   @impl GenServer
   def handle_info(:fetch_all, state) do
@@ -167,24 +185,40 @@ defmodule Offsite.Downloaders.Torrent do
                              "addedDate" => addedDate
                            }
                          } ->
+            torrent = Map.get(state, id)
+
+            torrent =
+              if Helpers.to_int(percentDone) == 1 && torrent && torrent.zip_status == :pending do
+                Logger.info("Enqueued zipping for: #{id}")
+                ZipperQueue.enqueue_work({id, "#{torrent.dest}/#{torrent.name}"})
+                ~M{%TorrentDownload torrent | zip_status: :enqueued}
+              else
+                torrent
+              end
+
+            new_map = ~M{ 
+                          id, 
+                          name,
+                          hashId: hashString, 
+                          percentDone,
+                          rateDownload,
+                          rateUpload,
+                          status: get_status(status),
+                          files, 
+                          magnetLink, 
+                          dest: downloadDir, 
+                          size: sizeWhenDone, 
+                          eta,
+                          bytes_downloaded: desiredAvailable,
+                          start_time: DateTime.from_unix(addedDate)
+                        }
+
             {
               id,
-              ~M{%TorrentDownload 
-                id, 
-                name,
-                hashId: hashString, 
-                percentDone,
-                rateDownload,
-                rateUpload,
-                status: get_status(status),
-                files, 
-                magnetLink, 
-                dest: downloadDir, 
-                size: sizeWhenDone, 
-                eta,
-                bytes_downloaded: desiredAvailable,
-                start_time: DateTime.from_unix(addedDate)
-              }
+              struct(
+                TorrentDownload,
+                if(torrent, do: Map.from_struct(torrent) |> Map.merge(new_map), else: new_map)
+              )
             }
           end)
           |> Map.new()
