@@ -1,5 +1,6 @@
 TODO
 
+auth for all routes including torrent
 add a way to restart transmission daemon from ui
 add auto install transmission and auto start daemon with proper download path
 add zip download option
