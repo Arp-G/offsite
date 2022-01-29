@@ -37,6 +37,9 @@ defmodule Offsite.Zipper.ZipperWorker do
       {id, src_path} ->
         dest_path = get_destination(id)
 
+        # Make torrent directory if not present
+        File.mkdir(@base_zip_dest)
+
         # TODO: Find low cpu usage no compression zipping option
         command = "zip -r '#{dest_path}' '#{src_path}'"
 
