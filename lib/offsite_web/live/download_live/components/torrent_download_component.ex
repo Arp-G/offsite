@@ -16,6 +16,7 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
       </td>
       <td class="download-row"> <TorrentDownloadComponent.progress download={@torrent} /> </td>
       <td class="download-row"> <TorrentDownloadComponent.download_status download={@torrent} /> </td>
+      <td class="download-row"> <TorrentDownloadComponent.zipping_status download={@torrent} /> </td>
       <td class="download-row"> <TorrentDownloadComponent.get_speed download={@torrent} /> </td>
       <td class="download-row"> <%= time_left(@torrent) %> </td>
       <td class="download-row"> <TorrentDownloadComponent.actions download={@torrent} /> </td>
@@ -65,6 +66,27 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
     end
   end
 
+  def zipping_status(assigns) do
+    status = assigns.download.zip_status |> Atom.to_string() |> String.capitalize()
+
+    cond do
+      assigns.download.zip_status in [:pending, :enqueued] ->
+        ~H"""
+        <span class="status-pill bg-yellow-500 text-yellow-50"><%= status %></span>
+        """
+
+      assigns.download.zip_status in [:working, :done] ->
+        ~H"""
+        <span class="status-pill bg-green-700 text-green-50"><%= status %></span>
+        """
+
+      assigns.download.zip_status == :error ->
+        ~H"""
+        <span class="status-pill bg-red-700 text-red-50"><%= status %></span>
+        """
+    end
+  end
+
   def time_left(~M{%TorrentDownload eta}) when is_nil(eta) or eta < 5, do: "NA"
 
   def time_left(~M{%TorrentDownload eta}) do
@@ -92,7 +114,7 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
           </svg>
         </div>
         <span class="pl-3 pt-1 text-xs whitespace-nowrap">
-          <%= "#{assigns.download.rateDownload |> Sizeable.filesize()}/sec" %> 
+          <%= "#{rateDownload |> Sizeable.filesize()}/sec" %> 
         </span>
       </div>
       <hr/>
@@ -106,7 +128,7 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
           </svg>
         </div>
         <span class="pl-3 pt-1 text-xs whitespace-nowrap">
-          <%= "#{assigns.download.rateUpload |> Sizeable.filesize()}/sec" %> 
+          <%= "#{rateUpload |> Sizeable.filesize()}/sec" %> 
         </span>
       </div>
     """
