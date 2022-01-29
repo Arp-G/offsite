@@ -6,7 +6,7 @@
   },
   "scripts": {
     "install-node-deps": "npm install --global command-line-args transmission",
-    "install-binaries": "apt-get -y install transmission-daemon && apt-get -y install zip",
+    "install-binaries": "sudo apt-get -y update && sudo apt-get -y install transmission-daemon && sudo apt-get -y install zip",
     "deploy": "npm run install-node-deps && npm run install-binaries && NODE_ENV=production tailwindcss --postcss --minify -i css/app.css -o ../priv/static/assets/app.css && cd .. && mix assets.deploy"
   },
   "dependencies": {
