@@ -20,12 +20,16 @@ defmodule Offsite.Helpers do
   def to_int(num), do: num
 
   def playable_extention(filepath) do
-    ext =
-      Path.extname(filepath)
-      |> String.trim_leading(".")
-      |> String.downcase()
-      |> String.trim()
+    # Usually browsers are only able to play ["mp4", "ogg", "webm"] files but
+    # I was able to play other as well so removing this for now
+    # ext =
+    #   Path.extname(filepath)
+    #   |> String.trim_leading(".")
+    #   |> String.downcase()
+    #   |> String.trim()
 
-    if ext in ["mp4", "ogg", "webm"], do: ext, else: false
+    # if ext in ["mp4", "ogg", "webm"], do: ext, else: false
+
+    ext
   end
 end
