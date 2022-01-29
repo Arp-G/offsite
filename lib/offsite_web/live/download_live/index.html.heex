@@ -99,8 +99,11 @@
       <video
         controls
         preload="auto"
+        autoplay
       >
         <source src={@play_modal} type="video/mp4" />
+        <source src={@play_modal} type="video/webm" />
+        <source src={@play_modal} type="video/ogg" />
       </video>
     </Modal.render>
   <% end %>
