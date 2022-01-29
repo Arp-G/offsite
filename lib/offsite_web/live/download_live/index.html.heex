@@ -97,10 +97,17 @@
   <%= if @play_modal do %>
     <Modal.render>
       <video
+        phx-hook="VideoJS"
+        id="video-js-player"
+        phx-update="ignore"
+        class="video-js"
         controls
         preload="auto"
+        data-setup='{"fluid": true, "autoplay":false,"html5": {"vhs": {"overrideNative": true}, "nativeAudioTracks": false, "nativeVideoTracks": false}}'
       >
         <source src={@play_modal} type="video/mp4" />
+        <source src={@play_modal} type="video/webm" />
+        <source src={@play_modal} type="video/ogg" />
       </video>
     </Modal.render>
   <% end %>
