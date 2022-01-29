@@ -42,7 +42,7 @@ defmodule OffsiteWeb.Components.AddTorrentDownloadComponent do
   @impl true
   def render(assigns) do
     ~H"""
-      <section class="mb-8">
+      <section class="mb-6">
         <.form
           let={f}
           for={:torrent}
@@ -59,6 +59,9 @@ defmodule OffsiteWeb.Components.AddTorrentDownloadComponent do
             <span>Add Torrent</span>
           <% end %>
         </.form>
+        <div class="underline text-xs font-semibold text-blue-600 hover:text-blue-800 relative left-16 mt-2">
+          <a href="/transmission/index.original.html"> Detailed torrents view </a>
+        </div>
       </section>
     """
   end

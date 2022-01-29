@@ -1,7 +1,6 @@
 defmodule OffsiteWeb.DownloadsLive.Index do
   use OffsiteWeb, :live_view
 
-  import ShorterMaps
   alias OffsiteWeb.Router.Helpers, as: RouteHelpers
 
   alias Offsite.Downloaders.{Direct, Torrent}
@@ -38,7 +37,7 @@ defmodule OffsiteWeb.DownloadsLive.Index do
   # Defining this is required to show flash messages from live components
   @impl true
   def handle_params(_params, _uri, socket) do
-    Process.send_after(self, :clear_flash, @flash_interval)
+    Process.send_after(self(), :clear_flash, @flash_interval)
     {:noreply, socket}
   end
 
@@ -48,7 +47,7 @@ defmodule OffsiteWeb.DownloadsLive.Index do
 
     socket = socket |> put_flash(:info, "Removed download!") |> assign(:downloads, Direct.list())
 
-    Process.send_after(self, :clear_flash, @flash_interval)
+    Process.send_after(self(), :clear_flash, @flash_interval)
 
     {:noreply, socket}
   end

@@ -24,7 +24,7 @@ defmodule OffsiteWeb.Router do
   end
 
   scope "/" do
-    pipe_through :api
+    pipe_through [:api, :auth]
 
     forward "/rpc", ReverseProxyPlug,
       upstream: "http://127.0.0.1:9091/transmission/rpc",
