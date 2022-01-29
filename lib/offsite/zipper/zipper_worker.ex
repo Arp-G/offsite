@@ -19,6 +19,10 @@ defmodule Offsite.Zipper.ZipperWorker do
     resp
   end
 
+  def get_destination(id) do
+    "#{@base_zip_dest}/#{id}.zip"
+  end
+
   # Callbacks
 
   @impl true
@@ -58,9 +62,5 @@ defmodule Offsite.Zipper.ZipperWorker do
     Process.send_after(self(), :work, @check_for_work_interval)
 
     {:noreply, state}
-  end
-
-  defp get_destination(id) do
-    "#{@base_zip_dest}/#{id}.zip"
   end
 end

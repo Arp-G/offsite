@@ -18,4 +18,14 @@ defmodule Offsite.Helpers do
   end
 
   def to_int(num), do: num
+
+  def playable_extention(filepath) do
+    ext =
+      Path.extname(filepath)
+      |> String.trim_leading(".")
+      |> String.downcase()
+      |> String.trim()
+
+    if ext in ["mp4", "ogg", "webm"], do: ext, else: false
+  end
 end
