@@ -16,7 +16,9 @@ defmodule Offsite.Application do
       OffsiteWeb.Endpoint,
       Offsite.Downloaders.Direct.Supervisor,
       Offsite.Downloaders.Direct,
-      Offsite.Downloaders.Torrent
+      Offsite.Downloaders.Torrent,
+      Offsite.Zipper.ZipperQueue,
+      Offsite.Zipper.ZipperWorker
       # Start a worker by calling: Offsite.Worker.start_link(arg)
       # {Offsite.Worker, arg}
     ]
