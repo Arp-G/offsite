@@ -4,6 +4,7 @@ TODO
 * On mount live view security
 * Simplify deps install currently I need to manually ssh and run: `chmod +x install_deps.sh && ./install_deps.sh`
 * Dockerize and Readme
+* Refactor and explore full features of functional components and slots wiht blog post here: https://fly.io/phoenix-files/function-components/
 * Refactor some code areas
 
 Observations:
