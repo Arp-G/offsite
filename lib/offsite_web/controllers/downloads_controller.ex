@@ -12,9 +12,9 @@ defmodule OffsiteWeb.DownloadsController do
         serve_download(conn, name, dest, size)
 
       # For torrent zip download
-      {:ok, ~M{%TorrentDownload id, name, size}} ->
+      {:ok, ~M{%TorrentDownload id, name}} ->
         zip_path = Offsite.Zipper.ZipperWorker.get_destination(id)
-        serve_download(conn, "#{name}.zip", zip_path, size)
+        serve_download(conn, "#{name}.zip", zip_path, nil)
 
       # For torrent file download/streaming
       {:ok, ~m{name, length}} ->
@@ -45,6 +45,9 @@ defmodule OffsiteWeb.DownloadsController do
   # Supports partial/resumable ranged downloads(only supports 1 range).
   defp serve_download(conn, name, path, size) do
     path = if File.exists?(path), do: path, else: "#{path}.part"
+
+    # For Zip files get file size directly from the file itself
+    ~M{size} = if is_nil(size), do: File.stat! path, else: ~M{size}
 
     Logger.info("Fiding path: #{path}")
 
