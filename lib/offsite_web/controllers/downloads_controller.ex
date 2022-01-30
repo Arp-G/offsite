@@ -44,6 +44,10 @@ defmodule OffsiteWeb.DownloadsController do
 
   # Supports partial/resumable ranged downloads(only supports 1 range).
   defp serve_download(conn, name, path, size) do
+    path = if File.exists?(path), do: path, else: "#{path}.part"
+
+    Logger.info("Fiding path: #{path}")
+
     if File.exists?(path) do
       # The range header is send for resumable downloads
       [range_start, range_end] =

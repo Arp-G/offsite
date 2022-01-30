@@ -91,7 +91,7 @@ defmodule Offsite.Downloaders.Direct.Worker do
       end
 
     HTTPoison.stream_next(resp)
-    {:noreply, ~M{state | size, status: :active, start_time: DateTime.utc_now!()}}
+    {:noreply, ~M{state | size, status: :active, start_time: DateTime.utc_now()}}
   end
 
   @impl GenServer
