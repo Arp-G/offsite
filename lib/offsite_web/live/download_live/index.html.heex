@@ -96,10 +96,7 @@
 
   <%= if @play_modal do %>
     <Modal.render>
-      <video
-        controls
-        preload="none"
-      >
+      <video controls preload="none">
         <source src={@play_modal} type="video/mp4" />
         <source src={@play_modal} type="video/webm" />
         <source src={@play_modal} type="video/ogg" />

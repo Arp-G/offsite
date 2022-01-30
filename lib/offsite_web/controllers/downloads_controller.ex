@@ -8,18 +8,18 @@ defmodule OffsiteWeb.DownloadsController do
   def download(conn, params) do
     case get_file_from_params(params) do
       # For normal file download/streaming
-      {:ok, ~M{%Download name, dest, size}} ->
-        serve_download(conn, name, dest, size)
+      {:ok, ~M{%Download name, dest}} ->
+        serve_download(conn, name, dest)
 
       # For torrent zip download
       {:ok, ~M{%TorrentDownload id, name}} ->
         zip_path = Offsite.Zipper.ZipperWorker.get_destination(id)
-        serve_download(conn, "#{name}.zip", zip_path, nil)
+        serve_download(conn, "#{name}.zip", zip_path)
 
       # For torrent file download/streaming
-      {:ok, ~m{name, length}} ->
+      {:ok, ~m{name}} ->
         filename = Path.basename(name)
-        serve_download(conn, filename, "#{Torrent.base_torrent_path()}/#{name}", length)
+        serve_download(conn, filename, "#{Torrent.base_torrent_path()}/#{name}")
 
       _ ->
         send_resp(conn, 204, "")
@@ -43,15 +43,12 @@ defmodule OffsiteWeb.DownloadsController do
   end
 
   # Supports partial/resumable ranged downloads(only supports 1 range).
-  defp serve_download(conn, name, path, size) do
+  defp serve_download(conn, name, path) do
     path = if File.exists?(path), do: path, else: "#{path}.part"
 
-    # For Zip files get file size directly from the file itself
-    ~M{size} = if is_nil(size), do: File.stat! path, else: ~M{size}
-
-    Logger.info("Fiding path: #{path}")
-
     if File.exists?(path) do
+      ~M{size} = File.stat!(path)
+
       # The range header is send for resumable downloads
       [range_start, range_end] =
         conn
