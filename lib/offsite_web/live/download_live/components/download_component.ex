@@ -24,7 +24,7 @@ defmodule OffsiteWeb.Components.DownloadComponent do
   end
 
   def progress(%{download: ~M{%Download status, bytes_downloaded, size}} = assigns) do
-    if status != :initiate && size != 0 do
+    if status != :initiate && Helpers.to_int(size) != 0 do
       percentage = bytes_downloaded / Helpers.to_int(size) * 100
 
       ~H"""

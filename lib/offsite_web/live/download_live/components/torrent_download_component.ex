@@ -75,7 +75,12 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
         <span class="status-pill bg-yellow-500 text-yellow-50"><%= status %></span>
         """
 
-      assigns.download.zip_status in [:working, :done] ->
+      assigns.download.zip_status == :working ->
+        ~H"""
+        <span class="status-pill bg-blue-700 text-blue-50"><%= status %></span>
+        """
+
+      assigns.download.zip_status == :done ->
         ~H"""
         <span class="status-pill bg-green-700 text-green-50"><%= status %></span>
         """
