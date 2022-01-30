@@ -11,21 +11,7 @@ defmodule OffsiteWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
-
-  scope "/", OffsiteWeb do
-    pipe_through [:browser, :auth]
-
-    get "/download/:id", DownloadsController, :download
-    live "/", DownloadsLive.Index, :index
-    live_dashboard "/dashboard", metrics: OffsiteWeb.Telemetry
-  end
-
   scope "/" do
-    pipe_through [:api, :auth]
-
     forward "/rpc", ReverseProxyPlug,
       upstream: "http://127.0.0.1:9091/transmission/rpc",
       error_callback: &__MODULE__.log_reverse_proxy_error/1
@@ -34,6 +20,14 @@ defmodule OffsiteWeb.Router do
       require Logger
       Logger.warn("ReverseProxyPlug network error: #{inspect(error)}")
     end
+  end
+
+  scope "/", OffsiteWeb do
+    pipe_through [:browser]
+
+    get "/download/:id", DownloadsController, :download
+    live "/", DownloadsLive.Index, :index
+    live_dashboard "/dashboard", metrics: OffsiteWeb.Telemetry
   end
 
   # Plug defination for Basic auth

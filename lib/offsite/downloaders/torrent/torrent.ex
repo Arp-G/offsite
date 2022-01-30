@@ -56,6 +56,8 @@ defmodule Offsite.Downloaders.Torrent do
   @impl Downloader
   def list(), do: GenServer.call(__MODULE__, :list)
 
+  def base_torrent_path, do: @base_dest
+
   # Callbacks
 
   @impl GenServer
@@ -210,7 +212,7 @@ defmodule Offsite.Downloaders.Torrent do
                           size: sizeWhenDone, 
                           eta,
                           bytes_downloaded: desiredAvailable,
-                          start_time: DateTime.from_unix(addedDate)
+                          start_time: DateTime.from_unix!(addedDate)
                         }
 
             {
