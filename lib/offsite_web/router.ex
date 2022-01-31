@@ -12,6 +12,8 @@ defmodule OffsiteWeb.Router do
   end
 
   scope "/" do
+    pipe_through [:auth]
+
     forward "/rpc", ReverseProxyPlug,
       upstream: "http://127.0.0.1:9091/transmission/rpc",
       error_callback: &__MODULE__.log_reverse_proxy_error/1
@@ -23,7 +25,7 @@ defmodule OffsiteWeb.Router do
   end
 
   scope "/", OffsiteWeb do
-    pipe_through [:browser]
+    pipe_through [:browser, :auth]
 
     get "/download/:id", DownloadsController, :download
     live "/", DownloadsLive.Index, :index
@@ -32,8 +34,11 @@ defmodule OffsiteWeb.Router do
 
   # Plug defination for Basic auth
   defp auth(conn, _opts) do
-    username = System.fetch_env!("AUTH_USERNAME")
-    password = System.fetch_env!("AUTH_PASSWORD")
+    username = get_env("AUTH_USERNAME") || "offsite"
+    password = get_env("AUTH_PASSWORD") || "offsite"
     Plug.BasicAuth.basic_auth(conn, username: username, password: password)
   end
+
+  defp get_env(env),
+    do: with({:ok, value} <- System.fetch_env(env), do: value, else: (:error -> nil))
 end
