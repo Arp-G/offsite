@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  transmission:
+    image: lscr.io/linuxserver/transmission
+    container_name: transmission
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - tmp:/tmp                                   # Torrent downloads location
+    restart: unless-stopped
+
+  phoenix:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      TRANSMISSION_HOST: transmission
+    volumes:
+      - .:/app                                      # The project folder
+      - elixir-deps:/app/deps                       # Elixir dependencies
+      - elixir-build:/app/_build                    # Elixir build files
+      - tmp:/tmp                                    # Torrent downloads location
+    tty: true
+    stdin_open: true
+    ports:
+      - "4000:4000"
+    depends_on:
+      - transmission
+volumes:
+  elixir-deps:
+  elixir-build:
+  node-modules:
+  tmp:
