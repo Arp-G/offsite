@@ -1,9 +1,9 @@
 TODO
 
-* Issues with parsing path in url params and only file no folder torrents
-  (zip -r '/tmp/torrents_zip/1.zip' '/tmp/torrents/PirateSnoop+Browser+Installer+1+0a')
-* Streaming and browser download wont work( "no file" error) on chrome, works on firefox.
+* Temp fix: Streaming and browser download wont work( "no file" error) on chrome, works on firefox. - 206 resp
+(https://stackoverflow.com/questions/57233053/chrome-fails-to-load-video-if-transferred-with-status-206-partial-content)
 * On mount live view security
+* Upon torrent download auto tab change due to redirect
 * Simplify deps install currently I need to manually ssh and run: `chmod +x install_deps.sh && ./install_deps.sh`
 * Dockerize and Readme
 * Refactor and explore full features of functional components and slots wiht blog post here: https://fly.io/phoenix-files/function-components/

@@ -48,6 +48,7 @@ defmodule OffsiteWeb.DownloadsController do
 
     if File.exists?(path) do
       ~M{size} = File.stat!(path)
+      size = Helpers.to_int(size)
 
       # The range header is send for resumable downloads
       [range_start, range_end] =
@@ -56,8 +57,7 @@ defmodule OffsiteWeb.DownloadsController do
         |> parse_range()
 
       # If range_end is missing consider size as range end
-      size = Helpers.to_int(size)
-      range_end = if !is_nil(range_end) && range_end > range_start, do: range_end, else: size
+      range_end = if !is_nil(range_end) && range_end > range_start, do: range_end, else: size - 1
       length = range_end - range_start
 
       Logger.info("Serving #{path} range: bytes #{range_start}-#{range_start + length}/#{size}")
@@ -71,9 +71,12 @@ defmodule OffsiteWeb.DownloadsController do
         "content-range",
         "bytes #{range_start}-#{range_start + length}/#{size}"
       )
-      |> put_resp_header("content-disposition", "attachment; filename=\"#{name}\"")
+      |> put_resp_header(
+        "content-disposition",
+        ~s[attachment; filename="#{URI.encode_www_form(name)}"]
+      )
       # 206 Partial Content
-      |> send_file(206, path, range_start, length)
+      |> send_file(get_resp_code(conn), path, range_start, length)
     else
       send_resp(conn, 204, "")
     end
@@ -81,7 +84,7 @@ defmodule OffsiteWeb.DownloadsController do
 
   # Parse the "range" header for resumable download byte offset
   # Header contains values like: "bytes=238590-"
-  # References: 
+  # References:
   # https://stackoverflow.com/questions/157318/resumable-downloads-when-using-php-to-send-the-file
   # https://elixirforum.com/t/question-regarding-send-download-send-file-from-binary-in-memory/32507/3
   defp parse_range([]), do: [0, nil]
@@ -93,5 +96,21 @@ defmodule OffsiteWeb.DownloadsController do
     range_end = if range_end == "", do: nil, else: Helpers.to_int(range_end)
 
     [range_start, range_end]
+  end
+
+  # Temp hack for chrome since it gives no file error on 206 response
+  # Without 206 response resuming might not work on chrome
+  def get_resp_code(conn) do
+    conn
+    |> get_req_header("user-agent")
+    |> case do
+      [user_agent] ->
+        user_agent
+        |> String.contains?("Chrome")
+        |> if(do: 200, else: 206)
+
+      _ ->
+        206
+    end
   end
 end
