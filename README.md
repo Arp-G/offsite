@@ -136,6 +136,13 @@ gigalixir config:set AUTH_USERNAME=Jhon
 gigalixir config:set AUTH_PASSWORD=secretpassword
 ```
 
+**The default values for the above configuration are...**</br>
+
+AUTH_USERNAME=`offsite`</br>
+AUTH_PASSWORD=`offsite`</br>
+
+*If you don't configure the above 2 environment variables then these defaults will be used.*
+
 * Now we need to install some additional dependencies for torrent download to work.
   - SSH into your running server by using the command: `gigalixir ps:ssh` (Learn more [here](https://gigalixir.readthedocs.io/en/latest/runtime.html))
   - Run the following script `./install_deps.sh`
