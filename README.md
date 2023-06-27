@@ -119,15 +119,15 @@ Our app does not need any database so that makes things simpler for us.*
 * Add a the gigalixir git remote by using the git:remote command `gigalixir git:remote $APP_NAME`
 * Create the following configuration variables
   Configurations:
-  
+
   - **SECRET_KEY_BASE** - A secret key base for the backend server. You can easily generate such a key using the command `mix phx.gen.secret`
-  
+
   To protect the offsite client we are using simple [HTTP basic auth](https://en.wikipedia.org/wiki/Basic_access_authentication).
   The following credentials will be required by anyone who tries to use the website.
-  
+
   - **AUTH_USERNAME** - Username for HTTP basic auth
-  - **AUTH_PASSWORD** - Passowrd for HTTP basic auth.
- 
+  - **AUTH_PASSWORD** - Password for HTTP basic auth.
+
 The above configuration can be set using commands like
 
 ```
@@ -149,7 +149,7 @@ AUTH_PASSWORD=`offsite`</br>
 
 *Note this script installs the transmission-torrent client and package for zipping files. It must be run every time after deployment or incase your server gets restarted*
 
-* Now open your application using `gigalixir open`. 
+* Now open your application using `gigalixir open`.
 <br/> <br/>
 That's all we need!
 
