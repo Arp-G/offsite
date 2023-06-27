@@ -10,6 +10,7 @@ import Config
 # Configures the endpoint
 config :offsite, OffsiteWeb.Endpoint,
   url: [host: "localhost"],
+  secret_key_base: "hWeSS7q9x9LY66qdQLQXnjjm2DtvqA3r+q1Dq3jC+CgZOaO/DyTp50FEUHbhZD8L",
   render_errors: [view: OffsiteWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: Offsite.PubSub,
   live_view: [signing_salt: "NylfXZvJ"]
@@ -43,6 +44,10 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :offsite, Offsite,
+  secret_key: "mWrx5hBSfF+Gz2d7C1QSF5l+kH/4ZI1Jyn3rNurCkzDL72lfnmtwcTbxcdi2+szo",
+  salt: "4gzgoc7oQu8yOgwoMNaNCikNsreWvMW5"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
