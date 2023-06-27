@@ -27,7 +27,7 @@ defmodule OffsiteWeb.DownloadsLive.Index do
      assign(socket, %{
        tab: "direct",
        downloads: Direct.list(),
-       torrent_downloads: Torrent.list(),
+       torrent_downloads: [] || Torrent.list(),
        play_modal: false,
        torrent_files_modal: false
      })}
@@ -121,7 +121,7 @@ defmodule OffsiteWeb.DownloadsLive.Index do
     socket =
       if socket.assigns.tab == "direct",
         do: assign(socket, :downloads, Direct.list()),
-        else: assign(socket, :torrent_downloads, Torrent.list())
+        else: assign(socket, :torrent_downloads, [] || Torrent.list())
 
     # Refresh torrent data in modal
     socket =

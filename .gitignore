@@ -34,3 +34,4 @@ npm-debug.log
 
 node_modules
 
+priv/static/transmission
