@@ -10,16 +10,16 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
 
   def render(assigns) do
     ~H"""
-      <td class="download-row w-52 font-bold cursor-pointer" title={@torrent.id}> <%= @index + 1 %> </td>
-      <td class="download-row w-52 underline text-blue-600 hover:text-blue-800 text-center whitespace-nowrap text-ellipsis overflow-hidden"> 
+      <td class="px-6 py-3 text-center text-xs font-medium w-52 font-bold cursor-pointer" title={@torrent.id}> <%= @index + 1 %> </td>
+      <td class="px-6 py-3 text-center text-xs font-medium w-52 underline text-blue-600 hover:text-blue-800 text-center whitespace-nowrap text-ellipsis overflow-hidden">
         <a href={@torrent.magnetLink}> <%= @torrent.name %> </a>
       </td>
-      <td class="download-row"> <TorrentDownloadComponent.progress download={@torrent} /> </td>
-      <td class="download-row"> <TorrentDownloadComponent.download_status download={@torrent} /> </td>
-      <td class="download-row"> <TorrentDownloadComponent.zipping_status download={@torrent} /> </td>
-      <td class="download-row"> <TorrentDownloadComponent.get_speed download={@torrent} /> </td>
-      <td class="download-row"> <%= time_left(@torrent) %> </td>
-      <td class="download-row flex flex-row justify-center"> <TorrentDownloadComponent.actions download={@torrent} /> </td>
+      <td class="px-6 py-3 text-center text-xs font-medium"> <TorrentDownloadComponent.progress download={@torrent} /> </td>
+      <td class="px-6 py-3 text-center text-xs font-medium"> <TorrentDownloadComponent.download_status download={@torrent} /> </td>
+      <td class="px-6 py-3 text-center text-xs font-medium"> <TorrentDownloadComponent.zipping_status download={@torrent} /> </td>
+      <td class="px-6 py-3 text-center text-xs font-medium"> <TorrentDownloadComponent.get_speed download={@torrent} /> </td>
+      <td class="px-6 py-3 text-center text-xs font-medium"> <%= time_left(@torrent) %> </td>
+      <td class="px-6 py-3 text-center text-xs font-medium flex flex-row justify-center"> <TorrentDownloadComponent.actions download={@torrent} /> </td>
     """
   end
 
@@ -32,8 +32,8 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
       # Need to DRY
       ~H"""
       <div class="w-full bg-gray-200 rounded-full font-bold">
-        <div class="leading-4 bg-green-600 font-bold text-center p-0.5 rounded-full h-5 transition-width" style={"width: #{percentage}%"}> 
-          <%= trunc(percentage) %>% 
+        <div class="leading-4 bg-green-600 font-bold text-center p-0.5 rounded-full h-5 transition-width" style={"width: #{percentage}%"}>
+          <%= trunc(percentage) %>%
         </div>
       </div>
       <div class="mt-1"> <%= "#{Sizeable.filesize(bytes_downloaded)} / #{Sizeable.filesize(size)}" %> </div>
@@ -51,17 +51,17 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
     cond do
       assigns.download.status in [:initiate, :stopped, :check_wait, :check, :download_wait] ->
         ~H"""
-        <span class="status-pill bg-yellow-500 text-yellow-50"><%= status %></span>
+        <span class="py-1 px-2 rounded-full text-xs font-bold ml-1 bg-yellow-500 text-yellow-50"><%= status %></span>
         """
 
       assigns.download.status == :download ->
         ~H"""
-        <span class="status-pill bg-blue-500 text-blue-50"><%= status %></span>
+        <span class="py-1 px-2 rounded-full text-xs font-bold ml-1 bg-blue-500 text-blue-50"><%= status %></span>
         """
 
       true ->
         ~H"""
-        <span class="status-pill bg-green-700 text-green-50"><%= status %></span>
+        <span class="py-1 px-2 rounded-full text-xs font-bold ml-1 bg-green-700 text-green-50"><%= status %></span>
         """
     end
   end
@@ -72,22 +72,22 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
     cond do
       assigns.download.zip_status in [:pending, :enqueued] ->
         ~H"""
-        <span class="status-pill bg-yellow-500 text-yellow-50"><%= status %></span>
+        <span class="py-1 px-2 rounded-full text-xs font-bold ml-1 bg-yellow-500 text-yellow-50"><%= status %></span>
         """
 
       assigns.download.zip_status == :working ->
         ~H"""
-        <span class="status-pill bg-blue-700 text-blue-50"><%= status %></span>
+        <span class="py-1 px-2 rounded-full text-xs font-bold ml-1 bg-blue-700 text-blue-50"><%= status %></span>
         """
 
       assigns.download.zip_status == :done ->
         ~H"""
-        <span class="status-pill bg-green-700 text-green-50"><%= status %></span>
+        <span class="py-1 px-2 rounded-full text-xs font-bold ml-1 bg-green-700 text-green-50"><%= status %></span>
         """
 
       assigns.download.zip_status == :error ->
         ~H"""
-        <span class="status-pill bg-red-700 text-red-50"><%= status %></span>
+        <span class="py-1 px-2 rounded-full text-xs font-bold ml-1 bg-red-700 text-red-50"><%= status %></span>
         """
     end
   end
@@ -119,12 +119,12 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
           </svg>
         </div>
         <span class="pl-3 pt-1 text-xs whitespace-nowrap">
-          <%= "#{rateDownload |> Sizeable.filesize()}/sec" %> 
+          <%= "#{rateDownload |> Sizeable.filesize()}/sec" %>
         </span>
       </div>
       <hr/>
       <div class="flex flex-row mr-4 mb-1" title="Upload Speed">
-        <div class="w-min pt-1"> 
+        <div class="w-min pt-1">
           <svg enable-background="new 0 0 512 512" width="20" height="20" version="1.1" viewBox="0 0 512 512" xml:space="preserve" xmlns="http://www.w3.org/2000/svg">
             <polygon points="463.13 221.33 396.31 288.15 316.13 207.97 316.13 501.96 195.87 501.96 195.87 207.97 115.69 288.15 48.871 221.33 256 14.202" fill="#00B4D7"/>
             <polygon points="48.871 221.33 115.69 288.15 195.87 207.97 195.87 501.96 256 501.96 256 14.202" fill="#0093C4"/>
@@ -133,7 +133,7 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
           </svg>
         </div>
         <span class="pl-3 pt-1 text-xs whitespace-nowrap">
-          <%= "#{rateUpload |> Sizeable.filesize()}/sec" %> 
+          <%= "#{rateUpload |> Sizeable.filesize()}/sec" %>
         </span>
       </div>
     """
@@ -142,8 +142,8 @@ defmodule OffsiteWeb.Components.TorrentDownloadComponent do
   def actions(%{download: ~M{%TorrentDownload id, zip_status}} = assigns) do
     ~H"""
     <%= if zip_status == :done do %>
-      <a 
-      class="mr-2 mt-4 text-red justify-center gap-2" 
+      <a
+      class="mr-2 mt-4 text-red justify-center gap-2"
       title="Download torrent zip"
       href={
         RouteHelpers.downloads_path(

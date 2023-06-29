@@ -20,7 +20,7 @@ defmodule OffsiteWeb.Router do
 
     def log_reverse_proxy_error(error) do
       require Logger
-      Logger.warn("ReverseProxyPlug network error: #{inspect(error)}")
+      Logger.warning("ReverseProxyPlug network error: #{inspect(error)}")
     end
   end
 

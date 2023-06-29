@@ -58,7 +58,7 @@ defmodule Offsite.Zipper.ZipperWorker do
         nil
 
       bad_work ->
-        Logger.warn("Ignoring bad work: #{inspect(bad_work)}")
+        Logger.warning("Ignoring bad work: #{inspect(bad_work)}")
         nil
     end
 

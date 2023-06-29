@@ -108,7 +108,7 @@ defmodule Offsite.Downloaders.Torrent do
         }
 
       %{"success" => false, "result" => reason} ->
-        Logger.warn("Failed to add torrent due to error: #{reason}")
+        Logger.warning("Failed to add torrent due to error: #{reason}")
         {:reply, {:error, reason}, state}
     end
   end
@@ -137,7 +137,7 @@ defmodule Offsite.Downloaders.Torrent do
             }
 
           %{"success" => false, "reason" => reason} ->
-            Logger.warn("Failed to remove torrent due to error: #{reason}")
+            Logger.warning("Failed to remove torrent due to error: #{reason}")
             {:reply, {:error, reason}, state}
         end
 
@@ -198,18 +198,18 @@ defmodule Offsite.Downloaders.Torrent do
                 torrent
               end
 
-            new_map = ~M{ 
-                          id, 
+            new_map = ~M{
+                          id,
                           name,
-                          hashId: hashString, 
+                          hashId: hashString,
                           percentDone,
                           rateDownload,
                           rateUpload,
                           status: get_status(status),
-                          files, 
-                          magnetLink, 
-                          dest: downloadDir, 
-                          size: sizeWhenDone, 
+                          files,
+                          magnetLink,
+                          dest: downloadDir,
+                          size: sizeWhenDone,
                           eta,
                           bytes_downloaded: desiredAvailable,
                           start_time: DateTime.from_unix!(addedDate)
@@ -226,7 +226,7 @@ defmodule Offsite.Downloaders.Torrent do
           |> Map.new()
 
         %{"success" => false, "reason" => reason} ->
-          Logger.warn("Failed to fetch torrents due to error: #{reason}")
+          Logger.warning("Failed to fetch torrents due to error: #{reason}")
           state
       end
 
